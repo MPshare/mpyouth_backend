@@ -1,14 +1,24 @@
 package kr.go.mapo.mpyouth.domain;
 
+import lombok.*;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@ToString
 public class Program {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotNull
     private String title;
+    @NotNull
     private String description;
 
     private LocalDateTime startDate;
@@ -17,15 +27,22 @@ public class Program {
     private LocalDateTime recruitStartDate;
     private LocalDateTime recruitEndDate;
 
+    @NotNull
     private int recruitNumber;
 
+    @NotNull
     private String location;
 
+    @NotNull
     private String managerName;
+
+    @NotNull
     private String managerContact;
 
+    @NotNull
     private String url;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private RecruitStatus recruitStatus;
 
@@ -33,6 +50,7 @@ public class Program {
 
     private String targetAge;
 
+    @NotNull
     private String caution;
     private String period;
 
@@ -46,4 +64,16 @@ public class Program {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_fk")
     private Category category;
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+
+    public void changeMangerName(String managerName) {
+        this.managerName = managerName;
+    }
 }
