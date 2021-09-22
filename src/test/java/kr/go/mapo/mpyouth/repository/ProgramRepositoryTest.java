@@ -114,7 +114,7 @@ class ProgramRepositoryTest {
 
         Program updateProgram = programRepository.findById(program.getId()).orElse(null);
 
-        Objects.requireNonNull(updateProgram).changeMangerName("변경확인용");
+//        Objects.requireNonNull(updateProgram).changeMangerName("변경확인용");
 
         programRepository.findById(updateProgram.getId())
                 .ifPresent(findProgram -> Assertions.assertThat(findProgram.getManagerName()).isEqualTo("변경확인용"));
