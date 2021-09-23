@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 @DynamicUpdate
-public class Program {
+public class Program extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -66,7 +66,7 @@ public class Program {
     @Enumerated(EnumType.STRING)
     private VolunteerType volunteerType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "oraganization_fk")
     private Organization organization;
 
@@ -74,4 +74,8 @@ public class Program {
     @JoinColumn(name = "category_fk")
     private Category category;
 
+    public void setOrganization(Organization organization){
+        this.organization = organization;
+        organization.getPrograms().add(this);
+    }
 }

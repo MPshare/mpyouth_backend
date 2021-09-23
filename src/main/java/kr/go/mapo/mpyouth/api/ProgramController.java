@@ -27,7 +27,7 @@ public class ProgramController {
         ProgramDto program = programService.findOne(id);
 
         ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                .status(HttpStatus.OK)
+                .status(ApiStatus.SUCCESS)
                 .message("Program 단일 조회")
                 .data(program)
                 .build();
@@ -39,7 +39,7 @@ public class ProgramController {
         List<ProgramDto> programs = programService.findPrograms();
 
         ApiResponse<List<ProgramDto>> response = ApiResponse.<List<ProgramDto>>builder()
-                .status(HttpStatus.OK)
+                .status(ApiStatus.SUCCESS)
                 .message("Program 전체 조회")
                 .data(programs)
                 .build();
@@ -58,7 +58,7 @@ public class ProgramController {
 
 
         ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                .status(HttpStatus.CREATED)
+                .status(ApiStatus.SUCCESS)
                 .message("Program 추가")
                 .data(newProgramDto)
                 .build();
@@ -78,7 +78,7 @@ public class ProgramController {
         ProgramDto updateProgramDto = programService.updateProgram(programDto);
 
         ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                .status(HttpStatus.OK)
+                .status(ApiStatus.SUCCESS)
                 .message("Program 수정")
                 .data(updateProgramDto)
                 .build();
@@ -93,7 +93,7 @@ public class ProgramController {
         programService.deleteProgram(id);
 
         ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                .status(HttpStatus.OK)
+                .status(ApiStatus.SUCCESS)
                 .message("Program 삭제")
                 .data(deleteProgramDto)
                 .build();

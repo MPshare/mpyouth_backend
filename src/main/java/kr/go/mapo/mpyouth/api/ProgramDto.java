@@ -41,6 +41,7 @@ public class ProgramDto {
     private String period;
     private VolunteerType volunteerType;
 //    private Organization organization;
+    private Long organizationId;
 
 //    private Category category;
 }
