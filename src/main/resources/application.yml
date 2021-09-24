@@ -1,0 +1,38 @@
+  spring:
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/mapo?serverTimezone=UTC&characterEncoding=UTF-8
+      username: root
+      password: 12341234
+
+    jpa:
+      hibernate:
+        ddl-auto: update
+      properties:
+        hibernate:
+          show_sql: true
+          format_sql: true
+
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: bmchhk13@gmail.com
+        password: rrdvlpjpjtmyjlnd
+        properties:
+          mail:
+            smtp:
+              auth: true
+              starttls:
+                enable: true
+
+
+  jwt:
+    header: Authorization
+    secret: fklsjfpelksakdk@!@!@@1asda
+    access-expirationMs: 3600000
+    refresh-expirationMs : 2629800000
+
+  logging:
+    level:
+      org.hibernate.SQL: debug
+      org.hibernate.type: trace
