@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,11 +16,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = {"organization", "category", "programFiles"})
 @DynamicUpdate
 public class Program extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -74,7 +76,11 @@ public class Program extends BaseEntity {
     @JoinColumn(name = "category_fk")
     private Category category;
 
-    public void setOrganization(Organization organization){
+    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
+    private List<ProgramFile> programFiles = new ArrayList<>();
+
+
+    public void setOrganization(Organization organization) {
         this.organization = organization;
         organization.getPrograms().add(this);
     }

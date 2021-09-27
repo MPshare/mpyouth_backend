@@ -1,13 +1,15 @@
 package kr.go.mapo.mpyouth.api;
 
-import kr.go.mapo.mpyouth.global.ProgramMapper;
 import kr.go.mapo.mpyouth.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -15,7 +17,6 @@ import java.util.List;
 @Slf4j
 public class ProgramController {
     private final ProgramService programService;
-    private final ProgramMapper programMapper;
 
     @GetMapping("/api/test")
     public String controllerTest() {
@@ -23,19 +24,29 @@ public class ProgramController {
     }
 
     @GetMapping("/api/program/{id}")
-    public ResponseEntity<ApiResponse<ProgramDto>> getProgram(@PathVariable("id") Long id){
-        ProgramDto program = programService.findOne(id);
+    public ResponseEntity<ApiResponse<ProgramDto>>getProgram(@PathVariable("id") Long id) {
+        ProgramDto findProgram = programService.findOne(id);
+
+        if(findProgram == null){
+            ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
+                    .status(ApiStatus.FAIL)
+                    .message("Program 조회 대상이 없습니다.")
+                    .build();
+
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
 
         ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
                 .status(ApiStatus.SUCCESS)
                 .message("Program 단일 조회")
-                .data(program)
+                .data(findProgram)
                 .build();
 
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @GetMapping("/api/program")
-    public ResponseEntity<ApiResponse<List<ProgramDto>>> getPrograms(){
+    public ResponseEntity<ApiResponse<List<ProgramDto>>> getPrograms() {
         List<ProgramDto> programs = programService.findPrograms();
 
         ApiResponse<List<ProgramDto>> response = ApiResponse.<List<ProgramDto>>builder()
@@ -47,20 +58,22 @@ public class ProgramController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/api/program")
-    public ResponseEntity<ApiResponse<ProgramDto>> saveProgram(@RequestBody ProgramDto programDto) {
-
+    @PostMapping(value = "/api/program", consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    })
+    public ResponseEntity<ApiResponse<ProgramDto>> saveProgram(
+            @ModelAttribute ProgramDto programDto,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles
+    ) throws IOException {
         System.out.println("programDto = " + programDto);
         log.info("{}", programDto);
 
-
-        ProgramDto newProgramDto = programService.saveProgram(programDto);
-
+        ProgramDto saveProgram = programService.saveProgram(programDto, imageFiles);
 
         ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
                 .status(ApiStatus.SUCCESS)
                 .message("Program 추가")
-                .data(newProgramDto)
+                .data(saveProgram)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -71,9 +84,9 @@ public class ProgramController {
             @PathVariable("id") Long id,
             @RequestBody ProgramDto programDto
     ) {
-        programDto.setId(id);
+        programDto.setProgramId(id);
 
-        log.info("{}",programDto);
+        log.info("{}", programDto);
 
         ProgramDto updateProgramDto = programService.updateProgram(programDto);
 
@@ -89,8 +102,7 @@ public class ProgramController {
     @DeleteMapping("/api/program/{id}")
     public ResponseEntity<ApiResponse<ProgramDto>> deleteProgram(@PathVariable("id") Long id) {
         log.info("id : {}", id);
-        ProgramDto deleteProgramDto = programService.findOne(id);
-        programService.deleteProgram(id);
+        ProgramDto deleteProgramDto = programService.deleteProgram(id);
 
         ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
                 .status(ApiStatus.SUCCESS)
