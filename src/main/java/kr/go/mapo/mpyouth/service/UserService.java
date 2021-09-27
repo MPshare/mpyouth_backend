@@ -4,13 +4,12 @@ import kr.go.mapo.mpyouth.common.ApiException;
 import kr.go.mapo.mpyouth.domain.AuthEmail;
 import kr.go.mapo.mpyouth.domain.AuthKey;
 import kr.go.mapo.mpyouth.domain.User;
-import kr.go.mapo.mpyouth.payload.request.InitPasswordRequest;
-import kr.go.mapo.mpyouth.payload.request.SearchIdRequest;
-import kr.go.mapo.mpyouth.payload.request.SearchPasswordRequest;
+import kr.go.mapo.mpyouth.payload.request.*;
 import kr.go.mapo.mpyouth.repository.AuthEmailRepository;
 import kr.go.mapo.mpyouth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import kr.go.mapo.mpyouth.repository.UserRepository;
+
+import org.aspectj.weaver.ast.Test;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -120,5 +119,7 @@ public class UserService {
             throw new ApiException(BAD_AUTH_KEY_ERROR);
         }
     }
+
+
 
 }
