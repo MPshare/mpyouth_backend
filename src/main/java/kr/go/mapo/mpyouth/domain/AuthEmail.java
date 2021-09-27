@@ -20,12 +20,9 @@ public class AuthEmail {
 
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_pk")
     private User user;
-
     private String authKey;
 
-//    @Enumerated(EnumType.STRING)
-//    private AuthStatus authStatus;
 
 }

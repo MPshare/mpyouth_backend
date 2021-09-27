@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(	name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "adminLoginId"),
                 @UniqueConstraint(columnNames = "email")
         })
 public class User {
@@ -54,7 +54,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
-
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "oraganization_fk")
+    private Organization organization;
 
     @Builder
     public User(String adminLoginId, String email, String username, String password) {
