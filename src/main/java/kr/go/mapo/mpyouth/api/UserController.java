@@ -129,7 +129,7 @@ public class UserController {
         UserInfoResponse user = userService.findMe(request);
         ApiResponse<UserInfoResponse> response = ApiResponse.<UserInfoResponse>builder()
                 .status(ApiStatus.SUCCESS)
-                .message(ResponseMessage.USER_PASSWROD_UPDATE_SUCESS)
+                .message(ResponseMessage.USER_SELECT_SUCCESS)
                 .data(user)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
