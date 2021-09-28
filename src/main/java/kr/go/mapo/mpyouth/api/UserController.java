@@ -102,7 +102,7 @@ public class UserController {
         List<UserInfoResponse> users = userService.findUsers();
         ApiResponse<List<UserInfoResponse>> response = ApiResponse.<List<UserInfoResponse>>builder()
                 .status(ApiStatus.SUCCESS)
-                .message(ResponseMessage.USER_PASSWROD_UPDATE_SUCESS)
+                .message(ResponseMessage.USERS_SELECT_SUCCESS)
                 .data(users)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -146,7 +146,7 @@ public class UserController {
 
         ApiResponse<UserInfoResponse> response = ApiResponse.<UserInfoResponse>builder()
                 .status(ApiStatus.SUCCESS)
-                .message(ResponseMessage.USER_PASSWROD_UPDATE_SUCESS)
+                .message(ResponseMessage.USER_DELETE_SUCCESS)
                 .data(null)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);

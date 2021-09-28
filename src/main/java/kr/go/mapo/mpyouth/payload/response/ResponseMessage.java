@@ -16,5 +16,7 @@ public class ResponseMessage {
     public static final String SEND_INIT_PASSWORD_SUCESS = "임시 비밀번호 발급 성공";
     public static final String USER_INFO_UPDATE_SUCESS = "유저 정보 갱신 성공";
     public static final String USER_PASSWROD_UPDATE_SUCESS ="유저 비밀번호 갱신 성공";
-
+    public static final String USER_DELETE_SUCCESS = "유저 삭제 성공";
+    public static final String USERS_SELECT_SUCCESS = "유저 리스트 조회 성공";
+    public static final String USER_SELECT_SUCCESS = "유저 조회 성공";
 }
