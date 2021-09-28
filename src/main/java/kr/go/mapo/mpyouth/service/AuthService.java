@@ -5,6 +5,7 @@ import kr.go.mapo.mpyouth.domain.*;
 import kr.go.mapo.mpyouth.payload.request.*;
 import kr.go.mapo.mpyouth.payload.response.JwtResponse;
 import kr.go.mapo.mpyouth.repository.AuthEmailRepository;
+import kr.go.mapo.mpyouth.repository.OrganizationRepository;
 import kr.go.mapo.mpyouth.repository.RoleRepository;
 import kr.go.mapo.mpyouth.repository.UserRepository;
 import kr.go.mapo.mpyouth.security.jwt.CustomAuthenticationToken;
@@ -40,6 +41,8 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
+    private final OrganizationRepository organizationRepository;
+
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -63,10 +66,19 @@ public class AuthService {
             throw new ApiException(ALREADY_REGISTERED_EMAIL);
         }
 
-        User user = new User(signUpRequest.getAdminLoginId(),
-                signUpRequest.getEmail(),
-                signUpRequest.getUsername(),
-                passwordEncoder.encode(signUpRequest.getPassword()));
+        Organization organization =organizationRepository.findById(signUpRequest.getOrganizationId())
+          .orElseThrow(() ->
+                new ApiException(NOT_FOUND_ORGANIZATION_WITH_ORGANIZATION_ID));
+
+        User user = User.builder()
+                .adminLoginId(signUpRequest.getAdminLoginId())
+                .password(passwordEncoder.encode(signUpRequest.getPassword()))
+                .username(signUpRequest.getUsername())
+                .email(signUpRequest.getEmail())
+                .organization(organization)
+                .phone(signUpRequest.getPhone())
+                .build();
+
 
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
@@ -97,6 +109,7 @@ public class AuthService {
 
         user.setRoles(roles);
         userRepository.save(user);
+
         return strRoles+" 등록 성공";
     }
 

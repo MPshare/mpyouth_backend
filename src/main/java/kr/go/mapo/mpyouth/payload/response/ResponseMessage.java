@@ -14,5 +14,7 @@ public class ResponseMessage {
     public static final String SEND_ADMIN_LOGIN_ID_SUCESS = "로그인 아이디 메일 보내기 성공";
     public static final String SEND_AUTH_KEY_SUCCESS = "이메일 인증키 보내기 성공";
     public static final String SEND_INIT_PASSWORD_SUCESS = "임시 비밀번호 발급 성공";
+    public static final String USER_INFO_UPDATE_SUCESS = "유저 정보 갱신 성공";
+    public static final String USER_PASSWROD_UPDATE_SUCESS ="유저 비밀번호 갱신 성공";
 
 }

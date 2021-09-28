@@ -1,8 +1,9 @@
 package kr.go.mapo.mpyouth.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -12,14 +13,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@Setter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@DynamicInsert
+@DynamicUpdate
+@EntityListeners(AuditingEntityListener.class)
+
 @Table(	name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "adminLoginId"),
                 @UniqueConstraint(columnNames = "email")
         })
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,6 +49,11 @@ public class User {
     @Size(max = 120)
     private String password;
 
+    @NotBlank
+    @Size(max = 20)
+    private String phone;
+
+
     @OneToOne(mappedBy = "user")
     private AuthEmail authEmail;
 
@@ -58,22 +71,15 @@ public class User {
     @JoinColumn(name = "oraganization_fk")
     private Organization organization;
 
-    @Builder
-    public User(String adminLoginId, String email, String username, String password) {
-        this.adminLoginId = adminLoginId;
-        this.email = email;
-        this.username=username;
-        this.password = password;
-    }
 
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    public Set<Role> getRoles() {
-        return roles;
-    }
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
+//    public Set<Role> getRoles() {
+//        return roles;
+//    }
+//    public void setRoles(Set<Role> roles) {
+//        this.roles = roles;
+//    }
 }

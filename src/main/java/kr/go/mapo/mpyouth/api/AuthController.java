@@ -25,12 +25,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final AuthService authService;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder encoder;
-    private final JwtUtils jwtUtils;
 
     @PostMapping("/signin")
     @ExceptionHandler(value = {EntityNotFoundException.class})
@@ -38,10 +33,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        return ResponseEntity.ok(new MessageResponse(authService.signup(signUpRequest)));
-    }
 
 
 }
