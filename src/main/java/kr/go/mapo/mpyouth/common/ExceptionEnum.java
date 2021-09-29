@@ -20,7 +20,32 @@ public enum ExceptionEnum {
     BAD_AUTH_KEY_ERROR(HttpStatus.NOT_FOUND,"400","인증키 값이 일치하지 않습니다. 인증코드 재발급 후 다시 시도해주세요"),
     NOT_FOUND_ORGANIZATION_WITH_ORGANIZATION_ID(HttpStatus.NOT_FOUND,"400","해당되는 기관이 존재하지 않습니다."),
     BEFORE_CREDENTIAL_AND_AFTER_CREDENTIAL_SAME_ERROR(HttpStatus.BAD_REQUEST,"400","현재 비밀번호와 변경하려하는 비밀번호가 같습니다."),
-    NEW_CREDENTIAL_AND_CHECK_NEW_CREDENTIAL_SAME_ERROR(HttpStatus.BAD_REQUEST,"400","새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+    NEW_CREDENTIAL_AND_CHECK_NEW_CREDENTIAL_SAME_ERROR(HttpStatus.BAD_REQUEST,"400","새 비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED,"401","액세스 토큰이 만료되었습니다."),
+    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"401","리프레쉬 토큰이 만료되었습니다."),
+    INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰 SIGNATURE입니다."),
+    INVALID_JWT(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),
+    NULL_JWT(HttpStatus.BAD_REQUEST,"400","토큰 값이 널입니다."),
+    UN_SUPPORTED_JWT(HttpStatus.UNAUTHORIZED,"401", "지원되지 않는 토큰입니다.");
+
+//}catch (SignatureException e) {
+//        logger.error("Invalid JWT signature: {}", e.getMessage());
+//        throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (MalformedJwtException e) {
+//        logger.error("Invalid JWT token: {}", e.getMessage());
+//        throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (ExpiredJwtException e) {
+//        logger.error("JWT token is expired: {}", e.getMessage());
+//        throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (UnsupportedJwtException e) {
+//        logger.error("JWT token is unsupported: {}", e.getMessage());
+//        throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (IllegalArgumentException e) {
+//        logger.error("JWT claims string is empty: {}", e.getMessage());
+//        throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        }
+//
+
     private final HttpStatus status;
     private String code;
     private String message;

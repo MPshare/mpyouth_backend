@@ -1,13 +1,16 @@
 package kr.go.mapo.mpyouth.security.jwt;
 
 
+import io.jsonwebtoken.*;
 import kr.go.mapo.mpyouth.common.ApiException;
+import kr.go.mapo.mpyouth.common.ExceptionEnum;
 import kr.go.mapo.mpyouth.security.utils.JwtUtils;
 import kr.go.mapo.mpyouth.security.utils.RedisUtils;
 import kr.go.mapo.mpyouth.service.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +22,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import static  kr.go.mapo.mpyouth.common.ExceptionEnum.*;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -30,19 +36,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private RedisUtils redisUtils;
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
             String jwt = jwtUtils.parseJwt(request);
 
-
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-
+            if (jwt != null && jwtUtils.isValidateJwtToken(jwt)) {
 
                 String adminLoginId = jwtUtils.getUserNameFromJwtToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(adminLoginId);
-
 
                 if(redisUtils.getData(adminLoginId)==null){
                     throw new ApiException(ACCESS_DENIED_EXCEPTION);
@@ -51,16 +55,38 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
 
-                System.out.println("userDetails.getAuthorities():"+userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception e) {
+        }
+        catch (SignatureException e) {
+            logger.error("Invalid JWT signature: {}", e.getMessage());
+        }
+        catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+            throw new CustomExpiredJwtException(ExceptionEnum.EXPIRED_ACCESS_TOKEN.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
+        }
+        catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e);
         }
-
         filterChain.doFilter(request, response);
     }
-
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        Collection<String> excludeUrlPatterns = new LinkedHashSet<>();
+//        excludeUrlPatterns.add("/login/**");
+//        excludeUrlPatterns.add("/logout/**");
+//        excludeUrlPatterns.add("/signup/**");
+//        excludeUrlPatterns.add("/resources/**");
+//
+//        return excludeUrlPatterns.stream()
+//                .anyMatch(pattern -> new AntPathMatcher().match(pattern, request.getServletPath()));
+//    }
 }

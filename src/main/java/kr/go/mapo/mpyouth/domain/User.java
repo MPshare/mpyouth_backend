@@ -67,19 +67,9 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @ManyToOne( cascade = CascadeType.DETACH)
     @JoinColumn(name = "oraganization_fk")
     private Organization organization;
 
 
-
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//    public Set<Role> getRoles() {
-//        return roles;
-//    }
-//    public void setRoles(Set<Role> roles) {
-//        this.roles = roles;
-//    }
 }

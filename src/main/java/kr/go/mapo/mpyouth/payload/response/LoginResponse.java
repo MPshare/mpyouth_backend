@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class JwtResponse {
+public class LoginResponse {
     private String accessToken;
     private String refreshToken;
     private String type = "Bearer";
@@ -15,7 +15,7 @@ public class JwtResponse {
     private String email;
     private List<String> roles;
 
-    public JwtResponse(String accessToken,String refreshToken, Long id, String username, String email, List<String> roles) {
+    public LoginResponse(String accessToken,String refreshToken, Long id, String username, String email, List<String> roles) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.id = id;

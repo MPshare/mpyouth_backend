@@ -1,6 +1,7 @@
 package kr.go.mapo.mpyouth.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.go.mapo.mpyouth.domain.Organization;
 import kr.go.mapo.mpyouth.domain.User;
 import lombok.Builder;

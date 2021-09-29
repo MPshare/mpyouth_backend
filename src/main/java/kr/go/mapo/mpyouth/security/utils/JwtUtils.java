@@ -2,6 +2,8 @@ package kr.go.mapo.mpyouth.security.utils;
 
 
 import io.jsonwebtoken.*;
+import kr.go.mapo.mpyouth.security.jwt.CustomExpiredJwtException;
+import kr.go.mapo.mpyouth.security.jwt.UsernameFromTokenException;
 import kr.go.mapo.mpyouth.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -14,6 +16,8 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+
+import static kr.go.mapo.mpyouth.common.ExceptionEnum.EXPIRED_REFRESH_TOKEN;
 
 
 @Component
@@ -67,28 +71,60 @@ public class JwtUtils {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public boolean validateJwtToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            if (redisUtils.getData(authToken) != null) {
-                return false;
-            }
-
-            return true;
-        } catch (SignatureException e) {
-            logger.error("Invalid JWT signature: {}", e.getMessage());
-        } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e.getMessage());
+    public boolean isValidateJwtToken(String authToken)  {
+        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+        if (redisUtils.getData(authToken) != null) {
+            return false;
         }
-
-        return false;
+        return true;
     }
+
+//    public boolean isValidRefreshToken(String authToken) throws CustomExpiredJwtException {
+//        try {
+//            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+//            if (redisUtils.getData(authToken) != null) {
+//                return false;
+//            }
+//            return true;
+//        } catch (SignatureException e) {
+//            logger.error("Invalid JWT signature: {}", e.getMessage());
+//            throw new CustomExpiredJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (MalformedJwtException e) {
+//            logger.error("Invalid JWT token: {}", e.getMessage());
+//            throw new CustomExpiredJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (ExpiredJwtException e) {
+//            logger.error("JWT token is expired: {}", e.getMessage());
+//            throw new CustomExpiredJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (UnsupportedJwtException e) {
+//            logger.error("JWT token is unsupported: {}", e.getMessage());
+//            throw new CustomExpiredJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (Exception e) {
+//            logger.error("Cannot set user authentication: {}", e);
+//            throw new CustomExpiredJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+//        } catch (NullPointerException exception) {
+//            System.out.println("Token is null");
+//            return false;
+//        }
+//    }
+
+//    public boolean isValidRefreshToken(String authToken) {
+//        try {
+//            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+//            if (redisUtils.getData(authToken) != null) {
+//                return false;
+//            }
+//            return true;
+//        } catch (ExpiredJwtException exception) {
+//            System.out.println("Token Expired UserID : " + exception.getClaims().getSubject());
+//            return false;
+//        } catch (JwtException exception) {
+//            System.out.println("Token Tampered");
+//            return false;
+//        } catch (NullPointerException exception) {
+//            System.out.println("Token is null");
+//            return false;
+//        }
+//    }
 
     public String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
@@ -100,4 +136,3 @@ public class JwtUtils {
         return null;
     }
 }
-//@Component

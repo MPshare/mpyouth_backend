@@ -1,30 +1,37 @@
 package kr.go.mapo.mpyouth.service;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import kr.go.mapo.mpyouth.common.ApiException;
+import kr.go.mapo.mpyouth.common.ExceptionEnum;
 import kr.go.mapo.mpyouth.domain.*;
 import kr.go.mapo.mpyouth.payload.request.*;
-import kr.go.mapo.mpyouth.payload.response.JwtResponse;
+import kr.go.mapo.mpyouth.payload.response.LoginResponse;
+import kr.go.mapo.mpyouth.payload.response.TokenResponse;
 import kr.go.mapo.mpyouth.repository.AuthEmailRepository;
 import kr.go.mapo.mpyouth.repository.OrganizationRepository;
 import kr.go.mapo.mpyouth.repository.RoleRepository;
 import kr.go.mapo.mpyouth.repository.UserRepository;
+import kr.go.mapo.mpyouth.security.jwt.AuthTokenFilter;
 import kr.go.mapo.mpyouth.security.jwt.CustomAuthenticationToken;
+import kr.go.mapo.mpyouth.security.jwt.CustomExpiredJwtException;
+import kr.go.mapo.mpyouth.security.jwt.CustomJwtException;
 import kr.go.mapo.mpyouth.security.utils.JwtUtils;
 import kr.go.mapo.mpyouth.security.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -48,15 +55,16 @@ public class AuthService {
 
     private final JwtUtils jwtUtils;
     private final RedisUtils redisUtils;
-    private final AuthEmailRepository authEmailRepository;
 
-    private final JavaMailSender mailSender;
+    private final UserDetailsServiceImpl userDetailsService;
+
     @Value("${jwt.refresh-expirationMs}")
     private long refreshExpirationMs;
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Transactional
-    public String signup(SignupRequest signUpRequest){
+    public void signup(SignupRequest signUpRequest) {
 
         if (userRepository.existsByAdminLoginId(signUpRequest.getAdminLoginId())) {
             throw new ApiException(ALREADY_REGISTERED_USER);
@@ -66,9 +74,9 @@ public class AuthService {
             throw new ApiException(ALREADY_REGISTERED_EMAIL);
         }
 
-        Organization organization =organizationRepository.findById(signUpRequest.getOrganizationId())
-          .orElseThrow(() ->
-                new ApiException(NOT_FOUND_ORGANIZATION_WITH_ORGANIZATION_ID));
+        Organization organization = organizationRepository.findById(signUpRequest.getOrganizationId())
+                .orElseThrow(() ->
+                        new ApiException(NOT_FOUND_ORGANIZATION_WITH_ORGANIZATION_ID));
 
         User user = User.builder()
                 .adminLoginId(signUpRequest.getAdminLoginId())
@@ -110,26 +118,26 @@ public class AuthService {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return strRoles+" 등록 성공";
+//        return strRoles + " 등록 성공";
     }
 
 
     @Transactional
-    public JwtResponse login(LoginRequest loginRequest){
+    public LoginResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
-                new CustomAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword(),new ArrayList<>()));
+                new CustomAuthenticationToken(loginRequest.getAdminLogId(), loginRequest.getPassword(), new ArrayList<>()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String accessToken = jwtUtils.generateAccessToken(authentication);
         String refreshToken = jwtUtils.generateRefreshToken(authentication);
 
-        redisUtils.setDataExpire(loginRequest.getUsername(),refreshToken, refreshExpirationMs);
+        redisUtils.setDataExpire(loginRequest.getAdminLogId(), refreshToken, refreshExpirationMs);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return new JwtResponse(accessToken,
+        return new LoginResponse(accessToken,
                 refreshToken,
                 userDetails.getId(),
                 userDetails.getUsername(),
@@ -139,44 +147,49 @@ public class AuthService {
     }
 
 
-
     @Transactional
-    public void logout(HttpServletRequest request){
+    public void logout(HttpServletRequest request) {
         String jwt = jwtUtils.parseJwt(request);
-        String username=jwtUtils.getUserNameFromJwtToken(jwt);
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
         redisUtils.deleteData(username);
     }
 
+    public TokenResponse reIssueToken(TokenRequest tokenRequest) throws CustomJwtException {
+        try {
+            String refreshToken = tokenRequest.getRefreshToken();
 
+            jwtUtils.isValidateJwtToken(refreshToken);
+            String adminLoginId = jwtUtils.getUserNameFromJwtToken(refreshToken);
 
+            if (redisUtils.getData(adminLoginId) == null || redisUtils.getData(adminLoginId).equals(refreshToken)==false) {
+                throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+            }
 
-//    @Transactional
-//    public TokenDto reissue(TokenRequest tokenRequest) {
-//        // 1. Refresh Token 검증
-//        if (!jwtUtils.validateJwtToken(tokenRequest.getRefreshToken())) {
-//            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
-//        }
-//
-//        // 2. Access Token 에서 Member ID 가져오기
-//        Authentication authentication = jwtUtils.get
-//
-//        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
-//        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-//                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
-//
-//        // 4. Refresh Token 일치하는지 검사
-//        if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
-//            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
-//        }
-//
-//        // 5. 새로운 토큰 생성
-//        JwtResponse tokenDto = jwtUtils.generateAceessToken(authentication);
-//
-//        // 6. 저장소 정보 업데이트
-//        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-//        refreshTokenRepository.save(newRefreshToken);
-//
-//        // 토큰 발급
-//        return tokenDto;
-//    }
+            UserDetails user = userDetailsService.loadUserByUsername(adminLoginId);
+            CustomAuthenticationToken authentication = new CustomAuthenticationToken(user,null,user.getAuthorities());
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String newAccessToken = jwtUtils.generateAccessToken(authentication);
+            String newRefreshToken = jwtUtils.generateRefreshToken(authentication);
+
+            redisUtils.setDataExpire(adminLoginId, newRefreshToken, refreshExpirationMs);
+            return new TokenResponse(newAccessToken, newRefreshToken);
+
+        }catch (SignatureException e) {
+            logger.error("Invalid JWT signature: {}", e.getMessage());
+            throw new CustomJwtException(INVALID_JWT_SIGNATURE.getMessage());
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+            throw new CustomJwtException(INVALID_JWT.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+            throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+            throw new CustomJwtException(UN_SUPPORTED_JWT.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
+            throw new CustomJwtException(NULL_JWT.getMessage());
+        }
+    }
 }

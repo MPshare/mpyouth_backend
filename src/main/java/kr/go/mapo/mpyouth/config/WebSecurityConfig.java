@@ -4,6 +4,7 @@ package kr.go.mapo.mpyouth.config;
 import kr.go.mapo.mpyouth.security.jwt.AuthEntryPointJwt;
 import kr.go.mapo.mpyouth.security.jwt.AuthTokenFilter;
 import kr.go.mapo.mpyouth.security.jwt.CustomAuthenticationProvider;
+import kr.go.mapo.mpyouth.security.jwt.ExceptionHandlerFilter;
 import kr.go.mapo.mpyouth.service.RoleHierarchyService;
 import kr.go.mapo.mpyouth.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
@@ -42,6 +44,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private RoleHierarchyService roleHierarchyService;
+
+    @Autowired
+    private ExceptionHandlerFilter exceptionHandlerFilter;
 
 
     @Bean
@@ -73,16 +78,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/test/**").permitAll()
+                .antMatchers("/api/test/**").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER")
                 .antMatchers("/api/user/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        ;
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler);
+
+//        권한 필터 예시
+//                .antMatchers(HttpMethod.POST,"/api/**").authenticated() // /api 하위 모든 POST요청
+//                .antMatchers(HttpMethod.PUT,"/api/**").authenticated() // /api 하위 모든 PUT요청
+//                .antMatchers(HttpMethod.DELETE,"/api/**").authenticated() // /api 하위 모든 DELETE요청
+//                .antMatchers("/manage/**").hasAuthority("ROLE_ADMIN") // /manage 하위 모든 요청은 관리자만
+//                .antMatchers("/","/login","/profile","/api/**").permitAll() // 이외 접근가능한 경로
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(exceptionHandlerFilter, AuthTokenFilter.class);
     }
 
     @Bean
