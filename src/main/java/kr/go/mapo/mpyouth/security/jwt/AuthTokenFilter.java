@@ -49,7 +49,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(adminLoginId);
 
                 if(redisUtils.getData(adminLoginId)==null){
-                    throw new ApiException(ACCESS_DENIED_EXCEPTION);
+                    throw new CustomJwtException(LOGOUT_USER);
                 }
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -59,23 +59,23 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        }
-        catch (SignatureException e) {
+        }catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
-        }
-        catch (MalformedJwtException e) {
+            throw new CustomJwtException(INVALID_JWT_SIGNATURE);
+        } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
+            throw new CustomJwtException(INVALID_JWT);
         } catch (ExpiredJwtException e) {
             logger.error("JWT token is expired: {}", e.getMessage());
-            throw new CustomExpiredJwtException(ExceptionEnum.EXPIRED_ACCESS_TOKEN.getMessage());
+            throw new CustomJwtException(EXPIRED_ACCESS_TOKEN);
         } catch (UnsupportedJwtException e) {
             logger.error("JWT token is unsupported: {}", e.getMessage());
+            throw new CustomJwtException(UN_SUPPORTED_JWT);
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
+            throw new CustomJwtException(NULL_JWT);
         }
-        catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
-        }
+
         filterChain.doFilter(request, response);
     }
 //    @Override

@@ -9,12 +9,12 @@ import org.springframework.http.HttpStatus;
 @Setter
 public class ErrorResponse {
     private HttpStatus status;
-    private String message;
+    private String errorMessage;
 //    private String code;
 
     public ErrorResponse(ExceptionEnum exceptionEnum){
         this.status = exceptionEnum.getStatus();
-        this.message = exceptionEnum.getMessage();
+        this.errorMessage = exceptionEnum.getMessage();
 //        this.code = errorCode.getErrorCode();
     }
 }

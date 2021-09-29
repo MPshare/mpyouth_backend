@@ -26,8 +26,8 @@ public enum ExceptionEnum {
     INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰 SIGNATURE입니다."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED,"401","유효하지 않은 토큰입니다."),
     NULL_JWT(HttpStatus.BAD_REQUEST,"400","토큰 값이 널입니다."),
-    UN_SUPPORTED_JWT(HttpStatus.UNAUTHORIZED,"401", "지원되지 않는 토큰입니다.");
-
+    UN_SUPPORTED_JWT(HttpStatus.UNAUTHORIZED,"401", "지원되지 않는 토큰입니다."),
+    LOGOUT_USER(HttpStatus.UNAUTHORIZED,"401","로그아웃 한 유저입니다.");
 //}catch (SignatureException e) {
 //        logger.error("Invalid JWT signature: {}", e.getMessage());
 //        throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());

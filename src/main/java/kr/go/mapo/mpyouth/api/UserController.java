@@ -185,6 +185,19 @@ public class UserController {
     }
 
 
+    @GetMapping("/logout")
+    public ResponseEntity<ApiResponse<ResponseMessage>> logout(HttpServletRequest request) {
+        authService.logout(request);
+
+        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+                .status(ApiStatus.SUCCESS)
+                .message(ResponseMessage.LOGOUT_SUCCESS)
+                .data(null)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 
 
 }

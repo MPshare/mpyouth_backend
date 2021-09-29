@@ -5,18 +5,15 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import kr.go.mapo.mpyouth.common.ApiException;
-import kr.go.mapo.mpyouth.common.ExceptionEnum;
 import kr.go.mapo.mpyouth.domain.*;
 import kr.go.mapo.mpyouth.payload.request.*;
 import kr.go.mapo.mpyouth.payload.response.LoginResponse;
 import kr.go.mapo.mpyouth.payload.response.TokenResponse;
-import kr.go.mapo.mpyouth.repository.AuthEmailRepository;
 import kr.go.mapo.mpyouth.repository.OrganizationRepository;
 import kr.go.mapo.mpyouth.repository.RoleRepository;
 import kr.go.mapo.mpyouth.repository.UserRepository;
 import kr.go.mapo.mpyouth.security.jwt.AuthTokenFilter;
 import kr.go.mapo.mpyouth.security.jwt.CustomAuthenticationToken;
-import kr.go.mapo.mpyouth.security.jwt.CustomExpiredJwtException;
 import kr.go.mapo.mpyouth.security.jwt.CustomJwtException;
 import kr.go.mapo.mpyouth.security.utils.JwtUtils;
 import kr.go.mapo.mpyouth.security.utils.RedisUtils;
@@ -24,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -162,7 +158,7 @@ public class AuthService {
             String adminLoginId = jwtUtils.getUserNameFromJwtToken(refreshToken);
 
             if (redisUtils.getData(adminLoginId) == null || redisUtils.getData(adminLoginId).equals(refreshToken)==false) {
-                throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+                throw new CustomJwtException(EXPIRED_REFRESH_TOKEN);
             }
 
             UserDetails user = userDetailsService.loadUserByUsername(adminLoginId);
@@ -177,19 +173,19 @@ public class AuthService {
 
         }catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
-            throw new CustomJwtException(INVALID_JWT_SIGNATURE.getMessage());
+            throw new CustomJwtException(INVALID_JWT_SIGNATURE);
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
-            throw new CustomJwtException(INVALID_JWT.getMessage());
+            throw new CustomJwtException(INVALID_JWT);
         } catch (ExpiredJwtException e) {
             logger.error("JWT token is expired: {}", e.getMessage());
-            throw new CustomJwtException(EXPIRED_REFRESH_TOKEN.getMessage());
+            throw new CustomJwtException(EXPIRED_REFRESH_TOKEN);
         } catch (UnsupportedJwtException e) {
             logger.error("JWT token is unsupported: {}", e.getMessage());
-            throw new CustomJwtException(UN_SUPPORTED_JWT.getMessage());
+            throw new CustomJwtException(UN_SUPPORTED_JWT);
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
-            throw new CustomJwtException(NULL_JWT.getMessage());
+            throw new CustomJwtException(NULL_JWT);
         }
     }
 }

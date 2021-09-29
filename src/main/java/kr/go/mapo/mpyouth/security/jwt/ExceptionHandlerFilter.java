@@ -22,7 +22,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
         } catch (CustomJwtException ex){
             logger.error("exception exception handler filter");
-            setErrorResponse(response,ExceptionEnum.EXPIRED_ACCESS_TOKEN);
+            setErrorResponse(response,ex.getExceptionEnum());
         } catch (RuntimeException ex){
             logger.error("runtime exception exception handler filter");
             setErrorResponse(response,ExceptionEnum.RUNTIME_EXCEPTION);

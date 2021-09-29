@@ -2,8 +2,6 @@ package kr.go.mapo.mpyouth.security.utils;
 
 
 import io.jsonwebtoken.*;
-import kr.go.mapo.mpyouth.security.jwt.CustomExpiredJwtException;
-import kr.go.mapo.mpyouth.security.jwt.UsernameFromTokenException;
 import kr.go.mapo.mpyouth.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -16,8 +14,6 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-
-import static kr.go.mapo.mpyouth.common.ExceptionEnum.EXPIRED_REFRESH_TOKEN;
 
 
 @Component

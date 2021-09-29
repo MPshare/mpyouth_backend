@@ -2,28 +2,17 @@ package kr.go.mapo.mpyouth.api;
 
 
 import kr.go.mapo.mpyouth.payload.request.LoginRequest;
-import kr.go.mapo.mpyouth.payload.request.SignupRequest;
-import kr.go.mapo.mpyouth.payload.request.InitPasswordRequest;
 import kr.go.mapo.mpyouth.payload.request.TokenRequest;
 import kr.go.mapo.mpyouth.payload.response.*;
-import kr.go.mapo.mpyouth.repository.RoleRepository;
-import kr.go.mapo.mpyouth.repository.UserRepository;
-import kr.go.mapo.mpyouth.security.jwt.CustomExpiredJwtException;
 import kr.go.mapo.mpyouth.security.jwt.CustomJwtException;
-import kr.go.mapo.mpyouth.security.utils.JwtUtils;
 import kr.go.mapo.mpyouth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 @ControllerAdvice
 @CrossOrigin(origins = "*", maxAge = 3600)
