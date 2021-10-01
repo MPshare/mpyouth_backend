@@ -1,7 +1,7 @@
 package kr.go.mapo.mpyouth.global.mapper;
 
-import kr.go.mapo.mpyouth.payload.OrganizationRequest;
-import kr.go.mapo.mpyouth.payload.OrganizationResponse;
+import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
+import kr.go.mapo.mpyouth.payload.response.OrganizationResponse;
 import kr.go.mapo.mpyouth.domain.Organization;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;

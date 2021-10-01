@@ -1,4 +1,4 @@
-package kr.go.mapo.mpyouth.payload;
+package kr.go.mapo.mpyouth.payload.request;
 
 import lombok.Builder;
 import lombok.Data;

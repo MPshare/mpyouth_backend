@@ -1,9 +1,8 @@
 package kr.go.mapo.mpyouth.api;
 
-import kr.go.mapo.mpyouth.payload.CustomApiResponse;
-import kr.go.mapo.mpyouth.payload.ApiStatus;
-import kr.go.mapo.mpyouth.payload.OrganizationRequest;
-import kr.go.mapo.mpyouth.payload.OrganizationResponse;
+import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
+import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
+import kr.go.mapo.mpyouth.payload.response.OrganizationResponse;
 import kr.go.mapo.mpyouth.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

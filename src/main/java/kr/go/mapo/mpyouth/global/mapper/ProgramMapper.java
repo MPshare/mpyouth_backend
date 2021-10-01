@@ -1,9 +1,9 @@
 package kr.go.mapo.mpyouth.global.mapper;
 
-import kr.go.mapo.mpyouth.payload.ProgramRequest;
-import kr.go.mapo.mpyouth.payload.ProgramFileRequest;
-import kr.go.mapo.mpyouth.payload.ProgramFileResponse;
-import kr.go.mapo.mpyouth.payload.ProgramResponse;
+import kr.go.mapo.mpyouth.payload.request.ProgramRequest;
+import kr.go.mapo.mpyouth.payload.request.ProgramFileRequest;
+import kr.go.mapo.mpyouth.payload.response.ProgramFileResponse;
+import kr.go.mapo.mpyouth.payload.response.ProgramResponse;
 import kr.go.mapo.mpyouth.domain.Program;
 import kr.go.mapo.mpyouth.domain.ProgramFile;
 import org.mapstruct.*;

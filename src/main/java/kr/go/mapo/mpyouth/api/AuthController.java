@@ -66,7 +66,7 @@ public class AuthController {
         LoginResponse res=authService.login(loginRequest);
 
         CustomApiResponse<LoginResponse> response = CustomApiResponse.<LoginResponse>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.LOGIN_SUCCESS)
                 .data(res)
                 .build();
@@ -86,7 +86,7 @@ public class AuthController {
 
         TokenResponse res =authService.reIssueToken(tokenRequest);
         CustomApiResponse<TokenResponse> response = CustomApiResponse.<TokenResponse>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.ISSUE_NEW_ACCESS_TOKEN_AND_REFRESH_TOKEN)
                 .data(res)
                 .build();

@@ -1,8 +1,6 @@
 package kr.go.mapo.mpyouth.api;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.*;
 import kr.go.mapo.mpyouth.payload.response.*;
@@ -45,7 +43,7 @@ public class UserController {
         authService.signup(signUpRequest);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.CREATED_USER)
                 .data(null)
                 .build();
@@ -65,7 +63,7 @@ public class UserController {
         userService.sendSearchId(searchIdRequest);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.SEND_ADMIN_LOGIN_ID_SUCESS)
                 .data(null)
                 .build();
@@ -84,7 +82,7 @@ public class UserController {
         userService.sendAuthKey(searchPasswordRequest);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.SEND_AUTH_KEY_SUCCESS)
                 .data(null)
                 .build();
@@ -104,7 +102,7 @@ public class UserController {
         userService.initPassword(initPasswordRequest);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.SEND_INIT_PASSWORD_SUCESS)
                 .data(null)
                 .build();
@@ -125,7 +123,7 @@ public class UserController {
         userService.updateUserPassword(request,modifyUserPasswordRequest);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_PASSWROD_UPDATE_SUCESS)
                 .data(null)
                 .build();
@@ -143,7 +141,7 @@ public class UserController {
 
         List<UserInfoResponse> users = userService.findUsers();
         CustomApiResponse<List<UserInfoResponse>> response = CustomApiResponse.<List<UserInfoResponse>>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USERS_SELECT_SUCCESS)
                 .data(users)
                 .build();
@@ -163,7 +161,7 @@ public class UserController {
     ) {
         UserInfoResponse user  = userService.findOne(id) ;
         CustomApiResponse<UserInfoResponse> response = CustomApiResponse.<UserInfoResponse>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_SELECT_SUCCESS)
                 .data(user)
                 .build();
@@ -182,7 +180,7 @@ public class UserController {
     public ResponseEntity<CustomApiResponse<UserInfoResponse>> getMyInfo(HttpServletRequest request)  {
         UserInfoResponse user = userService.findMe(request);
         CustomApiResponse<UserInfoResponse> response = CustomApiResponse.<UserInfoResponse>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_SELECT_SUCCESS)
                 .data(user)
                 .build();
@@ -201,7 +199,7 @@ public class UserController {
         userService.updateUser(request,modifyUserInfoRequest);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_INFO_UPDATE_SUCESS)
                 .data(null)
                 .build();
@@ -223,7 +221,7 @@ public class UserController {
         userService.deleteUser(id);
 
         CustomApiResponse<UserInfoResponse> response = CustomApiResponse.<UserInfoResponse>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_DELETE_SUCCESS)
                 .data(null)
                 .build();
@@ -243,7 +241,7 @@ public class UserController {
         userService.updateUser(request,modifyUserInfoRequest);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_INFO_UPDATE_SUCESS)
                 .data(null)
                 .build();
@@ -261,7 +259,7 @@ public class UserController {
         authService.logout(request);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.LOGOUT_SUCCESS)
                 .data(null)
                 .build();
