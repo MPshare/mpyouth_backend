@@ -1,4 +1,4 @@
-package kr.go.mapo.mpyouth.api;
+package kr.go.mapo.mpyouth.payload;
 
 public enum ApiStatus {
     SUCCESS, FAIL

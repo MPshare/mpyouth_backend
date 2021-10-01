@@ -29,13 +29,16 @@ dependencies {
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 	implementation 'commons-io:commons-io:2.11.0'
 	implementation 'org.imgscalr:imgscalr-lib:4.2'
+	implementation 'org.springframework.boot:spring-boot-configuration-processor'
 
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.1.0"
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }

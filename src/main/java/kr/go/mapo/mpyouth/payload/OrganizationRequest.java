@@ -1,4 +1,4 @@
-package kr.go.mapo.mpyouth.api;
+package kr.go.mapo.mpyouth.payload;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

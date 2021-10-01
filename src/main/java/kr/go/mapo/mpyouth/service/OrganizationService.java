@@ -1,9 +1,9 @@
 package kr.go.mapo.mpyouth.service;
 
-import kr.go.mapo.mpyouth.api.OrganizationRequest;
-import kr.go.mapo.mpyouth.api.OrganizationResponse;
+import kr.go.mapo.mpyouth.payload.OrganizationRequest;
+import kr.go.mapo.mpyouth.payload.OrganizationResponse;
 import kr.go.mapo.mpyouth.domain.Organization;
-import kr.go.mapo.mpyouth.global.OrganizationMapper;
+import kr.go.mapo.mpyouth.global.mapper.OrganizationMapper;
 import kr.go.mapo.mpyouth.repository.OrganizationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

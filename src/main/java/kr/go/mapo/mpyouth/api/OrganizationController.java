@@ -1,5 +1,9 @@
 package kr.go.mapo.mpyouth.api;
 
+import kr.go.mapo.mpyouth.payload.CustomApiResponse;
+import kr.go.mapo.mpyouth.payload.ApiStatus;
+import kr.go.mapo.mpyouth.payload.OrganizationRequest;
+import kr.go.mapo.mpyouth.payload.OrganizationResponse;
 import kr.go.mapo.mpyouth.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +20,11 @@ public class OrganizationController {
     private final OrganizationService organizationService;
 
     @PostMapping("/api/organization")
-    public ResponseEntity<ApiResponse<OrganizationResponse>> createOrganization(@RequestBody OrganizationRequest organizationRequest) {
+    public ResponseEntity<CustomApiResponse<OrganizationResponse>> createOrganization(@RequestBody OrganizationRequest organizationRequest) {
         OrganizationResponse organizationResponse = organizationService.saveOrganization(organizationRequest);
 
-        ApiResponse<OrganizationResponse> response = ApiResponse.<OrganizationResponse>builder()
-                .status(ApiStatus.SUCCESS)
+        CustomApiResponse<OrganizationResponse> response = CustomApiResponse.<OrganizationResponse>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("Organization 추가")
                 .data(organizationResponse)
                 .build();
@@ -28,11 +32,11 @@ public class OrganizationController {
     }
 
     @GetMapping("/api/organization/{id}")
-    public ResponseEntity<ApiResponse<OrganizationResponse>> getOrganization(@PathVariable("id") Long id) {
+    public ResponseEntity<CustomApiResponse<OrganizationResponse>> getOrganization(@PathVariable("id") Long id) {
         OrganizationResponse findOrganization = organizationService.findOne(id);
 
-        ApiResponse<OrganizationResponse> response = ApiResponse.<OrganizationResponse>builder()
-                .status(ApiStatus.SUCCESS)
+        CustomApiResponse<OrganizationResponse> response = CustomApiResponse.<OrganizationResponse>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("기관 단일 검색")
                 .data(findOrganization)
                 .build();
@@ -41,11 +45,11 @@ public class OrganizationController {
     }
 
     @GetMapping("/api/organization")
-    public ResponseEntity<ApiResponse<List<OrganizationResponse>>> getOrganizations() {
+    public ResponseEntity<CustomApiResponse<List<OrganizationResponse>>> getOrganizations() {
         List<OrganizationResponse> organizations = organizationService.findOrganizations();
 
-        ApiResponse<List<OrganizationResponse>> response = ApiResponse.<List<OrganizationResponse>>builder()
-                .status(ApiStatus.SUCCESS)
+        CustomApiResponse<List<OrganizationResponse>> response = CustomApiResponse.<List<OrganizationResponse>>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("기관 전체 검색")
                 .data(organizations)
                 .build();
@@ -54,14 +58,14 @@ public class OrganizationController {
     }
 
     @PutMapping("/api/organization/{id}")
-    public ResponseEntity<ApiResponse<OrganizationResponse>> updateOrganization(
+    public ResponseEntity<CustomApiResponse<OrganizationResponse>> updateOrganization(
             @PathVariable("id") Long id,
             @RequestBody OrganizationRequest organizationRequest
     ) {
         OrganizationResponse organizationResponse = organizationService.updateOrganization(id, organizationRequest);
 
-        ApiResponse<OrganizationResponse> response = ApiResponse.<OrganizationResponse>builder()
-                .status(ApiStatus.SUCCESS)
+        CustomApiResponse<OrganizationResponse> response = CustomApiResponse.<OrganizationResponse>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("Organization 수정")
                 .data(organizationResponse)
                 .build();
@@ -70,11 +74,11 @@ public class OrganizationController {
     }
 
     @DeleteMapping("/api/organization/{id}")
-    public ResponseEntity<ApiResponse<OrganizationResponse>> updateOrganization(@PathVariable("id") Long id) {
+    public ResponseEntity<CustomApiResponse<OrganizationResponse>> updateOrganization(@PathVariable("id") Long id) {
         OrganizationResponse organizationResponse = organizationService.deleteOrganization(id);
 
-        ApiResponse<OrganizationResponse> response = ApiResponse.<OrganizationResponse>builder()
-                .status(ApiStatus.SUCCESS)
+        CustomApiResponse<OrganizationResponse> response = CustomApiResponse.<OrganizationResponse>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("Organization 삭제")
                 .data(organizationResponse)
                 .build();

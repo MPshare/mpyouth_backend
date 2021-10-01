@@ -1,8 +1,10 @@
-package kr.go.mapo.mpyouth.api;
+package kr.go.mapo.mpyouth.payload;
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder

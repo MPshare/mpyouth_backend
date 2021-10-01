@@ -1,43 +1,43 @@
 package kr.go.mapo.mpyouth.api;
 
+import kr.go.mapo.mpyouth.payload.ApiStatus;
+import kr.go.mapo.mpyouth.payload.CustomApiResponse;
+import kr.go.mapo.mpyouth.payload.ProgramRequest;
+import kr.go.mapo.mpyouth.payload.ProgramResponse;
 import kr.go.mapo.mpyouth.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+@RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class ProgramController {
     private final ProgramService programService;
 
-    @GetMapping("/api/test")
-    public String controllerTest() {
-        return "test ok";
-    }
+    //                    @ApiResponses({
+//                            @ApiResponse(code = 200, message = "MpYouth API 테스트"),
+//                            @ApiResponse(code = 500, message = "서버 오류"),
+//                    })
 
-    @GetMapping("/api/program/{id}")
-    public ResponseEntity<ApiResponse<ProgramDto>>getProgram(@PathVariable("id") Long id) {
-        ProgramDto findProgram = programService.findOne(id);
 
-        if(findProgram == null){
-            ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                    .status(ApiStatus.FAIL)
-                    .message("Program 조회 대상이 없습니다.")
-                    .build();
+    @GetMapping("/program/{id}")
+    public ResponseEntity<CustomApiResponse<ProgramResponse>> getProgram(@PathVariable("id") Long id) {
+        ProgramResponse findProgram = programService.findOne(id);
 
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-
-        ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                .status(ApiStatus.SUCCESS)
+        CustomApiResponse<ProgramResponse> response = CustomApiResponse.<ProgramResponse>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("Program 단일 조회")
                 .data(findProgram)
                 .build();
@@ -45,12 +45,12 @@ public class ProgramController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/api/program")
-    public ResponseEntity<ApiResponse<List<ProgramDto>>> getPrograms() {
-        List<ProgramDto> programs = programService.findPrograms();
+    @GetMapping("/program")
+    public ResponseEntity<CustomApiResponse<List<ProgramResponse>>> getPrograms() {
+        List<ProgramResponse> programs = programService.findPrograms();
 
-        ApiResponse<List<ProgramDto>> response = ApiResponse.<List<ProgramDto>>builder()
-                .status(ApiStatus.SUCCESS)
+        CustomApiResponse<List<ProgramResponse>> response = CustomApiResponse.<List<ProgramResponse>>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("Program 전체 조회")
                 .data(programs)
                 .build();
@@ -58,20 +58,29 @@ public class ProgramController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/api/program", consumes = {
+    @PostMapping(value = "/program", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
-    public ResponseEntity<ApiResponse<ProgramDto>> saveProgram(
-            @ModelAttribute ProgramDto programDto,
-            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles
-    ) throws IOException {
-        System.out.println("programDto = " + programDto);
-        log.info("{}", programDto);
+    public ResponseEntity<?> saveProgram(
+            @Valid @ModelAttribute ProgramRequest programRequest,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
+            HttpServletRequest request
+    ) throws Exception {
+        System.out.println("programDto = " + programRequest);
+        log.info("{}", programRequest);
 
-        ProgramDto saveProgram = programService.saveProgram(programDto, imageFiles);
+        String fileUri = request.getScheme()
+                + "://"
+                + request.getLocalAddr()
+                + ":"
+                + request.getLocalPort();
 
-        ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                .status(ApiStatus.SUCCESS)
+        log.info("fileUri : {}", fileUri);
+
+        ProgramResponse saveProgram = programService.saveProgram(programRequest, imageFiles, fileUri);
+
+        CustomApiResponse<ProgramResponse> response = CustomApiResponse.<ProgramResponse>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("Program 추가")
                 .data(saveProgram)
                 .build();
@@ -79,35 +88,46 @@ public class ProgramController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping("/api/program/{id}")
-    public ResponseEntity<ApiResponse<ProgramDto>> updateProgram(
+
+    @PutMapping(value = "/program/{id}", consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    })
+    public ResponseEntity<CustomApiResponse<ProgramResponse>> updateProgram(
             @PathVariable("id") Long id,
-            @RequestBody ProgramDto programDto
-    ) {
-        programDto.setProgramId(id);
+            @Validated @ModelAttribute ProgramRequest programRequest,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
+            HttpServletRequest request
+    ) throws IOException {
+        programRequest.setProgramId(id);
 
-        log.info("{}", programDto);
+        log.info("{}", programRequest);
 
-        ProgramDto updateProgramDto = programService.updateProgram(programDto);
+        String fileUri = request.getScheme()
+                + "://"
+                + request.getLocalAddr()
+                + ":"
+                + request.getLocalPort();
 
-        ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                .status(ApiStatus.SUCCESS)
+        ProgramResponse updateProgramRequest = programService.updateProgram(programRequest, imageFiles, fileUri);
+
+        CustomApiResponse<ProgramResponse> response = CustomApiResponse.<ProgramResponse>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("Program 수정")
-                .data(updateProgramDto)
+                .data(updateProgramRequest)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/program/{id}")
-    public ResponseEntity<ApiResponse<ProgramDto>> deleteProgram(@PathVariable("id") Long id) {
+    @DeleteMapping("/program/{id}")
+    public ResponseEntity<CustomApiResponse<ProgramResponse>> deleteProgram(@PathVariable("id") Long id) {
         log.info("id : {}", id);
-        ProgramDto deleteProgramDto = programService.deleteProgram(id);
+        ProgramResponse deleteProgramRequest = programService.deleteProgram(id);
 
-        ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
-                .status(ApiStatus.SUCCESS)
+        CustomApiResponse<ProgramResponse> response = CustomApiResponse.<ProgramResponse>builder()
+                .success(ApiStatus.SUCCESS)
                 .message("Program 삭제")
-                .data(deleteProgramDto)
+                .data(deleteProgramRequest)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);

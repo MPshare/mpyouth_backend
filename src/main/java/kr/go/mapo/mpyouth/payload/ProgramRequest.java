@@ -1,4 +1,4 @@
-package kr.go.mapo.mpyouth.api;
+package kr.go.mapo.mpyouth.payload;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,9 +18,13 @@ import java.util.List;
 @Setter
 @ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ProgramDto {
+public class ProgramRequest {
     private Long programId;
+
+//    @NotBlank(message = "타이틀은 공백일 수 없습니다.")
     private String title;
+//    @NotBlank(message = "설명은 공백일 수 없습니다.")
+    @NotBlank
     private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
