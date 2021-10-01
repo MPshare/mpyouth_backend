@@ -31,7 +31,7 @@ public class UserController {
 
 
 
-    @Secured("ROLE_ADMIN")
+//    @Secured("ROLE_ADMIN")
     @Operation(summary = "관리자 등록", description = "관리자를 등록합니다", responses = {
             @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
             @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
@@ -72,6 +72,12 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "비밀번호 찾기", description = "adminLoginId와 email를 이용하여 인증키 값을 이메일로 받습니다.", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+            @ApiResponse(responseCode = "409", description = "CONFLICT"),
+    })
     @PostMapping("/find/password")
     public ResponseEntity<CustomApiResponse<ResponseMessage>> findPassword(@Valid @RequestBody SearchPasswordRequest searchPasswordRequest) throws MessagingException {
 
@@ -86,6 +92,12 @@ public class UserController {
     }
 
 
+    @Operation(summary = "비밀번호 초기화", description = " adminLoginId, 이메일로 받은 인증키, email를 이용하여 비밀번호를 초기화합니다.", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+            @ApiResponse(responseCode = "409", description = "CONFLICT"),
+    })
     @PostMapping("/init/password")
     public ResponseEntity<CustomApiResponse<ResponseMessage>> InitPassword(@Valid @RequestBody InitPasswordRequest initPasswordRequest) throws MessagingException {
     
@@ -100,6 +112,12 @@ public class UserController {
     }
 
 
+    @Operation(summary = "비밀번호 변경", description = " 현재 비밀번호, 새 비밀번호, 확인 비밀번호를 이용하여 비밀번호를 변경합니다.", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+            @ApiResponse(responseCode = "409", description = "CONFLICT"),
+    })
 
     @Secured({"ROLE_ADMIN","ROLE_MANAGER"})
     @PutMapping("/password")
@@ -114,6 +132,11 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "관리자 리스트 조회", description = "관리자 리스트를 조회합니다.", responses = {
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+    })
+
     @Secured({"ROLE_ADMIN"})
     @GetMapping("")
     public ResponseEntity<CustomApiResponse<List<UserInfoResponse>>> getUsers()  {
@@ -126,6 +149,12 @@ public class UserController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @Operation(summary = "관리자 조회", description = "관리자를 조회합니다.", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+    })
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/{id}")
@@ -143,6 +172,11 @@ public class UserController {
 
     }
 
+    @Operation(summary = "내 정보 조회", description = "내 정보를 조회합니다.", responses = {
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+    })
+
     @Secured({"ROLE_ADMIN","ROLE_MANAGER"})
     @GetMapping("/me")
     public ResponseEntity<CustomApiResponse<UserInfoResponse>> getMyInfo(HttpServletRequest request)  {
@@ -154,6 +188,12 @@ public class UserController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @Operation(summary = "내 정보 변경", description = "내 정보를 변경합니다.", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+    })
 
     @Secured({"ROLE_ADMIN","ROLE_MANAGER"})
     @PutMapping("/me")
@@ -169,6 +209,11 @@ public class UserController {
     }
 
 
+    @Operation(summary = "관리자 삭제", description = "관리자를 삭제합니다.", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+    })
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     public ResponseEntity<CustomApiResponse<UserInfoResponse>> deleteUser(
@@ -186,6 +231,12 @@ public class UserController {
     }
 
 
+
+    @Operation(summary = "관리자 정보 변경", description = "관리자 정보를 변경합니다.", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+    })
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
     public ResponseEntity<CustomApiResponse<ResponseMessage>> changeUserInfo(HttpServletRequest request, @Valid @RequestBody ModifyUserInfoRequest modifyUserInfoRequest)  {
@@ -200,6 +251,11 @@ public class UserController {
     }
 
 
+
+    @Operation(summary = "로그아웃", description = "로그아웃합니다.", responses = {
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+    })
     @GetMapping("/logout")
     public ResponseEntity<CustomApiResponse<ResponseMessage>> logout(HttpServletRequest request) {
         authService.logout(request);
