@@ -2,6 +2,7 @@ package kr.go.mapo.mpyouth.domain;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
@@ -19,6 +20,8 @@ import java.util.List;
 @Builder
 @ToString(exclude = {"organization", "category", "programFiles"})
 @DynamicUpdate
+@EntityListeners(AuditingEntityListener.class)
+
 public class Program extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
