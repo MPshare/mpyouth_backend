@@ -1,8 +1,8 @@
 package kr.go.mapo.mpyouth.api;
 
+import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.payload.response.ResponseMessage;
 import kr.go.mapo.mpyouth.service.AuthService;
-import kr.go.mapo.mpyouth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +37,10 @@ public class TestController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<ApiResponse<ResponseMessage>> logout(HttpServletRequest request) {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>> logout(HttpServletRequest request) {
         authService.logout(request);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.LOGOUT_SUCCESS)
                 .data(null)

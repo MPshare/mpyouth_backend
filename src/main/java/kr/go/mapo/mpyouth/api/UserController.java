@@ -1,16 +1,17 @@
 package kr.go.mapo.mpyouth.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.*;
-import kr.go.mapo.mpyouth.payload.response.MessageResponse;
-import kr.go.mapo.mpyouth.payload.response.ResponseMessage;
-import kr.go.mapo.mpyouth.payload.response.UserInfoResponse;
+import kr.go.mapo.mpyouth.payload.response.*;
 import kr.go.mapo.mpyouth.service.AuthService;
 import kr.go.mapo.mpyouth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -31,11 +32,19 @@ public class UserController {
 
 
     @Secured("ROLE_ADMIN")
+    @Operation(summary = "관리자 등록", description = "관리자를 등록합니다", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "403", description = "FORBIDDEN"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+            @ApiResponse(responseCode = "409", description = "CONFLICT"),
+    })
+
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<ResponseMessage>> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>>   registerUser(@Valid @RequestBody SignupRequest signUpRequest)  {
         authService.signup(signUpRequest);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.CREATED_USER)
                 .data(null)
@@ -44,12 +53,18 @@ public class UserController {
     }
 
 
+    @Operation(summary = "아이디 찾기", description = "이메일 정보로 아이디를 찾습니다.", responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
+            @ApiResponse(responseCode = "409", description = "CONFLICT"),
+    })
     @PostMapping("/find/id")
-    public ResponseEntity<ApiResponse<ResponseMessage>> findId(@Valid @RequestBody SearchIdRequest searchIdRequest) throws MessagingException {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>> findId(@Valid @RequestBody SearchIdRequest searchIdRequest) throws MessagingException {
 
         userService.sendSearchId(searchIdRequest);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.SEND_ADMIN_LOGIN_ID_SUCESS)
                 .data(null)
@@ -58,11 +73,11 @@ public class UserController {
     }
 
     @PostMapping("/find/password")
-    public ResponseEntity<ApiResponse<ResponseMessage>> findPassword(@Valid @RequestBody SearchPasswordRequest searchPasswordRequest) throws MessagingException {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>> findPassword(@Valid @RequestBody SearchPasswordRequest searchPasswordRequest) throws MessagingException {
 
         userService.sendAuthKey(searchPasswordRequest);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.SEND_AUTH_KEY_SUCCESS)
                 .data(null)
@@ -72,11 +87,11 @@ public class UserController {
 
 
     @PostMapping("/init/password")
-    public ResponseEntity<ApiResponse<ResponseMessage>> InitPassword(@Valid @RequestBody InitPasswordRequest initPasswordRequest) throws MessagingException {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>> InitPassword(@Valid @RequestBody InitPasswordRequest initPasswordRequest) throws MessagingException {
     
         userService.initPassword(initPasswordRequest);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.SEND_INIT_PASSWORD_SUCESS)
                 .data(null)
@@ -88,10 +103,10 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN","ROLE_MANAGER"})
     @PutMapping("/password")
-    public ResponseEntity<ApiResponse<ResponseMessage>> changeUserPassword(HttpServletRequest request, @Valid @RequestBody ModifyUserPasswordRequest modifyUserPasswordRequest)  {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>> changeUserPassword(HttpServletRequest request, @Valid @RequestBody ModifyUserPasswordRequest modifyUserPasswordRequest)  {
         userService.updateUserPassword(request,modifyUserPasswordRequest);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_PASSWROD_UPDATE_SUCESS)
                 .data(null)
@@ -101,10 +116,10 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<UserInfoResponse>>> getUsers()  {
+    public ResponseEntity<CustomApiResponse<List<UserInfoResponse>>> getUsers()  {
 
         List<UserInfoResponse> users = userService.findUsers();
-        ApiResponse<List<UserInfoResponse>> response = ApiResponse.<List<UserInfoResponse>>builder()
+        CustomApiResponse<List<UserInfoResponse>> response = CustomApiResponse.<List<UserInfoResponse>>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USERS_SELECT_SUCCESS)
                 .data(users)
@@ -114,11 +129,11 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/{id}")
-     public ResponseEntity<ApiResponse<UserInfoResponse>> getUser(
+     public ResponseEntity<CustomApiResponse<UserInfoResponse>> getUser(
             @PathVariable("id") Long id
     ) {
         UserInfoResponse user  = userService.findOne(id) ;
-        ApiResponse<UserInfoResponse> response = ApiResponse.<UserInfoResponse>builder()
+        CustomApiResponse<UserInfoResponse> response = CustomApiResponse.<UserInfoResponse>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_SELECT_SUCCESS)
                 .data(user)
@@ -130,9 +145,9 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN","ROLE_MANAGER"})
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<UserInfoResponse>> getMyInfo(HttpServletRequest request)  {
+    public ResponseEntity<CustomApiResponse<UserInfoResponse>> getMyInfo(HttpServletRequest request)  {
         UserInfoResponse user = userService.findMe(request);
-        ApiResponse<UserInfoResponse> response = ApiResponse.<UserInfoResponse>builder()
+        CustomApiResponse<UserInfoResponse> response = CustomApiResponse.<UserInfoResponse>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_SELECT_SUCCESS)
                 .data(user)
@@ -142,10 +157,10 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN","ROLE_MANAGER"})
     @PutMapping("/me")
-    public ResponseEntity<ApiResponse<ResponseMessage>> changeMyInfo(HttpServletRequest request, @Valid @RequestBody ModifyUserInfoRequest modifyUserInfoRequest)  {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>> changeMyInfo(HttpServletRequest request, @Valid @RequestBody ModifyUserInfoRequest modifyUserInfoRequest)  {
         userService.updateUser(request,modifyUserInfoRequest);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_INFO_UPDATE_SUCESS)
                 .data(null)
@@ -156,13 +171,13 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserInfoResponse>> deleteUser(
+    public ResponseEntity<CustomApiResponse<UserInfoResponse>> deleteUser(
             @PathVariable("id") Long id
     )  {
 
         userService.deleteUser(id);
 
-        ApiResponse<UserInfoResponse> response = ApiResponse.<UserInfoResponse>builder()
+        CustomApiResponse<UserInfoResponse> response = CustomApiResponse.<UserInfoResponse>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_DELETE_SUCCESS)
                 .data(null)
@@ -173,10 +188,10 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN"})
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ResponseMessage>> changeUserInfo(HttpServletRequest request, @Valid @RequestBody ModifyUserInfoRequest modifyUserInfoRequest)  {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>> changeUserInfo(HttpServletRequest request, @Valid @RequestBody ModifyUserInfoRequest modifyUserInfoRequest)  {
         userService.updateUser(request,modifyUserInfoRequest);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.USER_INFO_UPDATE_SUCESS)
                 .data(null)
@@ -186,10 +201,10 @@ public class UserController {
 
 
     @GetMapping("/logout")
-    public ResponseEntity<ApiResponse<ResponseMessage>> logout(HttpServletRequest request) {
+    public ResponseEntity<CustomApiResponse<ResponseMessage>> logout(HttpServletRequest request) {
         authService.logout(request);
 
-        ApiResponse<ResponseMessage> response = ApiResponse.<ResponseMessage>builder()
+        CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
                 .status(ApiStatus.SUCCESS)
                 .message(ResponseMessage.LOGOUT_SUCCESS)
                 .data(null)

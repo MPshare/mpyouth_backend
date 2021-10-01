@@ -29,7 +29,6 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         }
     }
 
-//    public void setErrorResponse(HttpStatus status, HttpServletResponse response,Throwable ex){
       public void setErrorResponse(HttpServletResponse response,ExceptionEnum exceptionEnum){
         response.setStatus(exceptionEnum.getStatus().value());
         response.setContentType("application/json;charset=UTF-8");

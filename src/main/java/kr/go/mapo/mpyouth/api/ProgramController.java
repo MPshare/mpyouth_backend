@@ -1,6 +1,7 @@
 package kr.go.mapo.mpyouth.api;
 
 import kr.go.mapo.mpyouth.global.ProgramMapper;
+import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,10 @@ public class ProgramController {
     }
 
     @GetMapping("/api/program/{id}")
-    public ResponseEntity<ApiResponse<ProgramDto>> getProgram(@PathVariable("id") Long id){
+    public ResponseEntity<CustomApiResponse<ProgramDto>> getProgram(@PathVariable("id") Long id){
         ProgramDto program = programService.findOne(id);
 
-        ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
+        CustomApiResponse<ProgramDto> response = CustomApiResponse.<ProgramDto>builder()
                 .status(ApiStatus.SUCCESS)
                 .message("Program 단일 조회")
                 .data(program)
@@ -35,10 +36,10 @@ public class ProgramController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     @GetMapping("/api/program")
-    public ResponseEntity<ApiResponse<List<ProgramDto>>> getPrograms(){
+    public ResponseEntity<CustomApiResponse<List<ProgramDto>>> getPrograms(){
         List<ProgramDto> programs = programService.findPrograms();
 
-        ApiResponse<List<ProgramDto>> response = ApiResponse.<List<ProgramDto>>builder()
+        CustomApiResponse<List<ProgramDto>> response = CustomApiResponse.<List<ProgramDto>>builder()
                 .status(ApiStatus.SUCCESS)
                 .message("Program 전체 조회")
                 .data(programs)
@@ -48,7 +49,7 @@ public class ProgramController {
     }
 
     @PostMapping("/api/program")
-    public ResponseEntity<ApiResponse<ProgramDto>> saveProgram(@RequestBody ProgramDto programDto) {
+    public ResponseEntity<CustomApiResponse<ProgramDto>> saveProgram(@RequestBody ProgramDto programDto) {
 
         System.out.println("programDto = " + programDto);
         log.info("{}", programDto);
@@ -57,7 +58,7 @@ public class ProgramController {
         ProgramDto newProgramDto = programService.saveProgram(programDto);
 
 
-        ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
+        CustomApiResponse<ProgramDto> response = CustomApiResponse.<ProgramDto>builder()
                 .status(ApiStatus.SUCCESS)
                 .message("Program 추가")
                 .data(newProgramDto)
@@ -67,7 +68,7 @@ public class ProgramController {
     }
 
     @PutMapping("/api/program/{id}")
-    public ResponseEntity<ApiResponse<ProgramDto>> updateProgram(
+    public ResponseEntity<CustomApiResponse<ProgramDto>> updateProgram(
             @PathVariable("id") Long id,
             @RequestBody ProgramDto programDto
     ) {
@@ -77,7 +78,7 @@ public class ProgramController {
 
         ProgramDto updateProgramDto = programService.updateProgram(programDto);
 
-        ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
+        CustomApiResponse<ProgramDto> response = CustomApiResponse.<ProgramDto>builder()
                 .status(ApiStatus.SUCCESS)
                 .message("Program 수정")
                 .data(updateProgramDto)
@@ -87,12 +88,12 @@ public class ProgramController {
     }
 
     @DeleteMapping("/api/program/{id}")
-    public ResponseEntity<ApiResponse<ProgramDto>> deleteProgram(@PathVariable("id") Long id) {
+    public ResponseEntity<CustomApiResponse<ProgramDto>> deleteProgram(@PathVariable("id") Long id) {
         log.info("id : {}", id);
         ProgramDto deleteProgramDto = programService.findOne(id);
         programService.deleteProgram(id);
 
-        ApiResponse<ProgramDto> response = ApiResponse.<ProgramDto>builder()
+        CustomApiResponse<ProgramDto> response = CustomApiResponse.<ProgramDto>builder()
                 .status(ApiStatus.SUCCESS)
                 .message("Program 삭제")
                 .data(deleteProgramDto)

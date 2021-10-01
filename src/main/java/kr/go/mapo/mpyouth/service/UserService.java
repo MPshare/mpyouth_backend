@@ -50,7 +50,13 @@ public class UserService {
     public void sendSearchId(SearchIdRequest searchIdRequest) throws MessagingException {
 
         String email = searchIdRequest.getEmail();
-        System.out.println("email:" + email);
+
+        if(email==null){
+            System.out.println("이거 실행");
+            throw new ApiException(NULL_EMAIL);
+        }
+
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiException(NOT_FOUND_USER_WITH_EMAIL));
 

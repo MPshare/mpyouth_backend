@@ -37,6 +37,8 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.5.5'
 	implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
 }
 
 test {

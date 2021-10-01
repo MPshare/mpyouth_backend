@@ -1,5 +1,6 @@
 package kr.go.mapo.mpyouth.payload.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.go.mapo.mpyouth.common.ExceptionEnum;
 import lombok.Getter;
 import lombok.Setter;

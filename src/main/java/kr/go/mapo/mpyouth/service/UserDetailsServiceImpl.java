@@ -1,6 +1,8 @@
 package kr.go.mapo.mpyouth.service;
 
 
+import kr.go.mapo.mpyouth.common.ApiException;
+import kr.go.mapo.mpyouth.common.ExceptionEnum;
 import kr.go.mapo.mpyouth.domain.User;
 import kr.go.mapo.mpyouth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String adminLoginId) throws UsernameNotFoundException {
         User user = userRepository.findByAdminLoginId(adminLoginId)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with adminLoginId: " + adminLoginId));
+                .orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_USER));
 
         return UserDetailsImpl.build(user);
     }
