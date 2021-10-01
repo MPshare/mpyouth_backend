@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
-@RequestMapping("/api")
+@RequestMapping("/api/program")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
