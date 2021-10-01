@@ -41,7 +41,7 @@ public class TestController {
         authService.logout(request);
 
         CustomApiResponse<ResponseMessage> response = CustomApiResponse.<ResponseMessage>builder()
-                .status(ApiStatus.SUCCESS)
+                .success(ApiStatus.SUCCESS)
                 .message(ResponseMessage.LOGOUT_SUCCESS)
                 .data(null)
                 .build();

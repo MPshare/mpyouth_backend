@@ -91,6 +91,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/test/**").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER")
                 .antMatchers("/api/user/**").permitAll()
+                .antMatchers("/api/program/**").permitAll()
+                .antMatchers("/api/organization/**").permitAll()
                 .mvcMatchers("/v3/**",
                         "/configuration/**",
                         "/swagger*/**",

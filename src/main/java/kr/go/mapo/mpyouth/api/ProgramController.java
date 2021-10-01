@@ -1,9 +1,8 @@
 package kr.go.mapo.mpyouth.api;
 
-import kr.go.mapo.mpyouth.payload.ApiStatus;
-import kr.go.mapo.mpyouth.payload.CustomApiResponse;
-import kr.go.mapo.mpyouth.payload.ProgramRequest;
-import kr.go.mapo.mpyouth.payload.ProgramResponse;
+import kr.go.mapo.mpyouth.payload.request.ProgramRequest;
+import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
+import kr.go.mapo.mpyouth.payload.response.ProgramResponse;
 import kr.go.mapo.mpyouth.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
-@RequestMapping("/api/program")
+@RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -62,7 +61,7 @@ public class ProgramController {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
     public ResponseEntity<?> saveProgram(
-            @Valid @ModelAttribute ProgramRequest programRequest,
+            @Validated @ModelAttribute ProgramRequest programRequest,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             HttpServletRequest request
     ) throws Exception {

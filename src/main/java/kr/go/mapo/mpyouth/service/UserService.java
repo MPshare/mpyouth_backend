@@ -1,6 +1,5 @@
 package kr.go.mapo.mpyouth.service;
 
-import kr.go.mapo.mpyouth.api.ProgramDto;
 import kr.go.mapo.mpyouth.common.ApiException;
 import kr.go.mapo.mpyouth.domain.*;
 import kr.go.mapo.mpyouth.payload.request.*;
@@ -12,8 +11,6 @@ import kr.go.mapo.mpyouth.repository.UserRepository;
 import kr.go.mapo.mpyouth.security.utils.JwtUtils;
 import kr.go.mapo.mpyouth.security.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
-
-import org.aspectj.weaver.ast.Test;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,8 +21,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
-
-import java.awt.print.Book;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
