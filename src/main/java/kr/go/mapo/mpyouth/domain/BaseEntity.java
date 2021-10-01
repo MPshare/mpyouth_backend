@@ -1,5 +1,6 @@
 package kr.go.mapo.mpyouth.domain;
 
+
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -9,6 +10,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import java.time.LocalDateTime;
+
 
 @Getter
 @MappedSuperclass
@@ -23,7 +25,6 @@ public class BaseEntity {
         updateDate = now;
     }
 
-
     @CreatedBy
     @Column(name = "created_by",updatable = false)
     protected String createdBy;
@@ -31,7 +32,6 @@ public class BaseEntity {
     @Column(name = "modified_by")
     @LastModifiedBy
     protected String modifiedBy;
-
 
     @PreUpdate
     public void preUpdate() {

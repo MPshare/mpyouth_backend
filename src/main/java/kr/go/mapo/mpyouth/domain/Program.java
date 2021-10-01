@@ -5,8 +5,11 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,16 +17,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = {"organization", "category", "programFiles"})
 @DynamicUpdate
 public class Program extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
+    @NotBlank
     private String title;
     @NotNull
+//    @NotBlank
     private String description;
 
     @Future
@@ -40,15 +45,19 @@ public class Program extends BaseEntity {
     private Integer recruitNumber;
 
     @NotNull
+    @NotBlank
     private String location;
 
     @NotNull
+    @NotBlank
     private String managerName;
 
     @NotNull
+    @NotBlank
     private String managerContact;
 
     @NotNull
+    @NotBlank
     private String url;
 
     @NotNull
@@ -60,9 +69,12 @@ public class Program extends BaseEntity {
     private String targetAge;
 
     @NotNull
+    @NotBlank
     private String caution;
+
     private String period;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private VolunteerType volunteerType;
 
@@ -74,8 +86,13 @@ public class Program extends BaseEntity {
     @JoinColumn(name = "category_fk")
     private Category category;
 
-//    public void setOrganization(Organization organization){
-//        this.organization = organization;
-////        organization.getPrograms().add(this);
-//    }
+    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProgramFile> programFiles = new ArrayList<>();
+
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+        organization.getPrograms().add(this);
+    }
+
 }

@@ -42,16 +42,22 @@
       max-request-size: 100MB
   file:
     dir: C:/Users/DeliciousNacho/fileUploadTest/
+    path: ${file.uri_path}/**
+    api_path: http://localhost:${server.port}${file.uri_path}/
+    uri_path: /file
 
-#  logging:
-#    level:
-#      org.hibernate.SQL: debug
-#      #    org.hibernate.type: trace
-#      org.apache.coyote.http11: debug
   logging:
     level:
       org.hibernate.SQL: debug
       org.hibernate.type: trace
+
+  server:
+    error:
+      include-exception: false
+      include-stacktrace: never
+      include-message: always
+      include-binding-errors: always
+    port: 8080
 
   springdoc:
     api-docs:
