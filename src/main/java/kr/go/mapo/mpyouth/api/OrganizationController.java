@@ -1,5 +1,8 @@
 package kr.go.mapo.mpyouth.api;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.payload.response.OrganizationResponse;
@@ -14,10 +17,16 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "청소년 기관")
 @Slf4j
 public class OrganizationController {
     private final OrganizationService organizationService;
 
+    @Operation(summary = "청소년 기관정보 저장*", description = "청소년 기관 정보를 저장합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @PostMapping("/api/organization")
     public ResponseEntity<CustomApiResponse<OrganizationResponse>> createOrganization(@RequestBody OrganizationRequest organizationRequest) {
         OrganizationResponse organizationResponse = organizationService.saveOrganization(organizationRequest);
@@ -30,6 +39,11 @@ public class OrganizationController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "청소년 기관 상세 조회*", description = "모든 청소년 기관의 상세 내용을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @GetMapping("/api/organization/{id}")
     public ResponseEntity<CustomApiResponse<OrganizationResponse>> getOrganization(@PathVariable("id") Long id) {
         OrganizationResponse findOrganization = organizationService.findOne(id);
@@ -43,6 +57,11 @@ public class OrganizationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "청소년 기관 전체 조회", description = "모든 청소년 기관의 목록을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @GetMapping("/api/organization")
     public ResponseEntity<CustomApiResponse<List<OrganizationResponse>>> getOrganizations() {
         List<OrganizationResponse> organizations = organizationService.findOrganizations();
@@ -56,6 +75,11 @@ public class OrganizationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "청소년 기관 수정*", description = "청소년 기관정보의 내용을 수정합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @PutMapping("/api/organization/{id}")
     public ResponseEntity<CustomApiResponse<OrganizationResponse>> updateOrganization(
             @PathVariable("id") Long id,
@@ -72,6 +96,11 @@ public class OrganizationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "청소년 기관 삭제*", description = "청소년 기관 정보를 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @DeleteMapping("/api/organization/{id}")
     public ResponseEntity<CustomApiResponse<OrganizationResponse>> updateOrganization(@PathVariable("id") Long id) {
         OrganizationResponse organizationResponse = organizationService.deleteOrganization(id);
