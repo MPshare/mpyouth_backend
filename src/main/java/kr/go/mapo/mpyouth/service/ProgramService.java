@@ -19,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,9 @@ import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +48,7 @@ public class ProgramService {
     private final ProgramThumbnailRepository programThumbnailRepository;
     private final ProgramMapper programMapper;
     private final EntityManager entityManager;
+    private final ResourceLoader resourceLoader;
 
     @Value("${file.dir}")
     String dir;
@@ -62,12 +65,6 @@ public class ProgramService {
         Program newProgram = programMapper.saveDtoToProgram(programRequest);
         programRepository.save(newProgram);
 
-
-        List<ProgramFile> programFiles = saveImageFiles(newProgram, imageFiles);
-
-        programFileRepository.saveAll(programFiles);
-
-        //
         if (imageFiles != null && !imageFiles.isEmpty()) {
             MultipartFile firstImage = imageFiles.get(0);
 
@@ -77,6 +74,14 @@ public class ProgramService {
                 programThumbnailRepository.save(programThumbnail);
             }
         }
+
+
+        List<ProgramFile> programFiles = saveImageFiles(newProgram, imageFiles);
+
+        programFileRepository.saveAll(programFiles);
+
+        //
+
 
         //
 
@@ -150,6 +155,8 @@ public class ProgramService {
             );
 
             File file = new File(dir + thumbnailName);
+
+
 
             log.info("thumbnail size : {}", file.length() / 1024);
 
