@@ -8,8 +8,10 @@ import kr.go.mapo.mpyouth.security.jwt.ExceptionHandlerFilter;
 import kr.go.mapo.mpyouth.service.RoleHierarchyService;
 import kr.go.mapo.mpyouth.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.RoleHierarchyVoter;
@@ -78,11 +80,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authenticationProvider());
     }
 
-//    @Override
-//    public void configure(WebSecurity web) throws Exception{
+    @Override
+    public void configure(WebSecurity web) throws Exception{
+        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 //        web.ignoring().antMatchers("/v2/api-docs","cpnfigure/ui",
 //                "/swagger-resoruces","configuration/security","/swagger-ui.html","/webjars/**","/swagger/**");
-//    }
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -90,9 +93,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/test/**").hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER")
+                .antMatchers(HttpMethod.GET,"/file/**").permitAll()
                 .antMatchers("/api/user/**").permitAll()
                 .antMatchers("/api/program/**").permitAll()
                 .antMatchers("/api/organization/**").permitAll()
+                .antMatchers("/api/category/**").permitAll()
+                .antMatchers("/api/donation/**").permitAll()
                 .mvcMatchers("/v3/**",
                         "/configuration/**",
                         "/swagger*/**",
