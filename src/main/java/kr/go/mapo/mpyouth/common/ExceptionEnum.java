@@ -29,7 +29,9 @@ public enum ExceptionEnum {
     NULL_EMAIL(HttpStatus.BAD_REQUEST,"400","이메일 값이 널입니다."),
     UN_SUPPORTED_JWT(HttpStatus.UNAUTHORIZED,"401", "지원되지 않는 토큰입니다."),
     LOGOUT_USER(HttpStatus.UNAUTHORIZED,"401","로그아웃 한 유저입니다."),
-    NOT_FOUND_URL(HttpStatus.NOT_FOUND,"404","잘못된 URL요청입니다.");
+    NOT_FOUND_URL(HttpStatus.NOT_FOUND,"404","잘못된 URL요청입니다."),
+    NOT_FOUND_PROGRAM(HttpStatus.NOT_FOUND,"404","조건에 맞는 프로그램이 없습니다."),
+    NOT_FOUND_DONATION(HttpStatus.NOT_FOUND,"404","조건에 맞는 재능기부가 없습니다.");
     private final HttpStatus status;
     private String code;
     private String message;

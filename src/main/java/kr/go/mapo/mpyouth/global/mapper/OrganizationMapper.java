@@ -8,9 +8,9 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = OrganizationMapper.class,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface OrganizationMapper {
-    OrganizationMapper instance = Mappers.getMapper(OrganizationMapper.class);
 
     @Mapping(source = "organizationId", target = "id")
     Organization saveDtoToOrganization(OrganizationRequest organizationRequest);

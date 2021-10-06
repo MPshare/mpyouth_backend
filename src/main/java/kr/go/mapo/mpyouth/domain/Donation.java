@@ -1,16 +1,28 @@
 package kr.go.mapo.mpyouth.domain;
 
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Donation {
-    @Id @GeneratedValue
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@DynamicUpdate
+@ToString
+@Builder
+@EntityListeners(AuditingEntityListener.class)
+public class Donation extends BaseEntity {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
     private String description;
-    private int recruitNumber;
+    private Integer recruitNumber;
     private String location;
 
     private LocalDateTime startDate;
@@ -30,7 +42,7 @@ public class Donation {
     private String managerName;
     private String managerContact;
 
-    private int entryFee;
+    private Integer entryFee;
 
     private String mentor;
 
