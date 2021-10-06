@@ -2,6 +2,8 @@ package kr.go.mapo.mpyouth.common;
 
 
 import kr.go.mapo.mpyouth.api.ApiStatus;
+import kr.go.mapo.mpyouth.exception.NotFoundDonationException;
+import kr.go.mapo.mpyouth.exception.NotFoundProgramException;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.security.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,8 @@ public class ApiExceptionAdvice {
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final ApiException e) {
         //e.printStackTrace();
 
+        log.error("ApiException");
+
         return ResponseEntity
                 .status(e.getError().getStatus())
                 .body(ApiExceptionEntity.builder()
@@ -46,9 +50,36 @@ public class ApiExceptionAdvice {
                         .build());
     }
 
-    @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final RuntimeException e) {
+    @ExceptionHandler({NotFoundProgramException.class})
+    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, NotFoundProgramException e) {
         e.printStackTrace();
+        log.error("message : {}, localizedMessage : {}", e.getMessage(), e.getLocalizedMessage());
+
+        return ResponseEntity
+                .status(ExceptionEnum.NOT_FOUND_PROGRAM.getStatus())
+                .body(ApiExceptionEntity.builder()
+                        .errorCode(ExceptionEnum.NOT_FOUND_PROGRAM.getCode())
+                        .errorMessage(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler({NotFoundDonationException.class})
+    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, NotFoundDonationException e) {
+        e.printStackTrace();
+        log.error("message : {}, localizedMessage : {}", e.getMessage(), e.getLocalizedMessage());
+
+        return ResponseEntity
+                .status(ExceptionEnum.NOT_FOUND_DONATION.getStatus())
+                .body(ApiExceptionEntity.builder()
+                        .errorCode(ExceptionEnum.NOT_FOUND_DONATION.getCode())
+                        .errorMessage(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, RuntimeException e) {
+        e.printStackTrace();
+        log.error("message : {}, localizedMessage : {}", e.getMessage(), e.getLocalizedMessage());
 
         return ResponseEntity
                 .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
@@ -61,6 +92,8 @@ public class ApiExceptionAdvice {
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final AccessDeniedException e) {
 //        e.printStackTrace();
+
+        log.error("AccessDeniedException");
         System.out.println("request:" + request.getHeader("Authorization"));
         System.out.println("request:" + request.getRequestURI());
         return ResponseEntity
@@ -71,16 +104,19 @@ public class ApiExceptionAdvice {
                         .build());
     }
 
-    @ExceptionHandler({Exception.class})
+    /*@ExceptionHandler({Exception.class})
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final Exception e) {
 //        e.printStackTrace();
+
+        log.error("Exception");
+
         return ResponseEntity
                 .status(ExceptionEnum.INTERNAL_SERVER_ERROR.getStatus())
                 .body(ApiExceptionEntity.builder()
                         .errorCode(ExceptionEnum.INTERNAL_SERVER_ERROR.getCode())
                         .errorMessage(e.getMessage())
                         .build());
-    }
+    }*/
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiExceptionEntity> processValidationError(MethodArgumentNotValidException exception) {
@@ -105,6 +141,7 @@ public class ApiExceptionAdvice {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletRequest request) {
+        log.error("NoHandlerFoundException");
 
         return ResponseEntity
                 .status(ExceptionEnum.NOT_FOUND_URL.getStatus())
