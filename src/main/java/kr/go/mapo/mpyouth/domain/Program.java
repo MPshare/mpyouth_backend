@@ -1,5 +1,6 @@
 package kr.go.mapo.mpyouth.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,13 +19,14 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"organization", "category", "programFiles"})
+@ToString(exclude = {"organization", "category", "programFiles", "programThumbnail"})
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 
 public class Program extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "program_id")
     private Long id;
 
     @NotNull
@@ -83,14 +85,20 @@ public class Program extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "oraganization_fk")
+    @JsonIgnore
     private Organization organization;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_fk")
+    @JsonIgnore
     private Category category;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProgramFile> programFiles = new ArrayList<>();
+
+    @OneToOne(mappedBy = "program", fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private ProgramThumbnail programThumbnail;
 
 
     public void setOrganization(Organization organization) {

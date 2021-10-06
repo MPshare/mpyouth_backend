@@ -5,17 +5,14 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.go.mapo.mpyouth.domain.RecruitStatus;
 import kr.go.mapo.mpyouth.domain.VolunteerType;
 import kr.go.mapo.mpyouth.payload.response.ProgramFileResponse;
-import kr.go.mapo.mpyouth.payload.response.ProgramThumbnailResponse;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -27,14 +24,13 @@ import java.util.List;
 @ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 //@ApiModel(description = "프로그램 저장 request")
-public class ProgramRequest {
+public class ProgramUpdateRequest {
     private Long programId;
 
     //    @NotBlank(message = "타이틀은 공백일 수 없습니다.")
     @ApiModelProperty(required = true, example = "RECRUTING")
     private String title;
     //    @NotBlank(message = "설명은 공백일 수 없습니다.")
-    @NotBlank
     private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
@@ -64,8 +60,6 @@ public class ProgramRequest {
     private VolunteerType volunteerType;
 
     private Long organizationId;
-
-    private Long categoryId;
 
     private List<ProgramFileResponse> programFiles;
 

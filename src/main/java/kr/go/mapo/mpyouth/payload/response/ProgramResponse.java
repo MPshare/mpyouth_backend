@@ -1,6 +1,7 @@
 package kr.go.mapo.mpyouth.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import kr.go.mapo.mpyouth.domain.RecruitStatus;
@@ -50,10 +51,15 @@ public class ProgramResponse {
     private String period;
     private VolunteerType volunteerType;
 
-    private Long organizationId;
-    private String organizationName;
+    private CategoryResponse category;
 
+    private OrganizationResponse organization;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ProgramFileResponse> programFiles;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ProgramThumbnailResponse thumbnail;
 
 //    private Category category;
 }

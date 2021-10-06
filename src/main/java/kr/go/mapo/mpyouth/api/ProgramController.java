@@ -1,11 +1,19 @@
 package kr.go.mapo.mpyouth.api;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.ProgramRequest;
+import kr.go.mapo.mpyouth.payload.request.ProgramUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.payload.response.ProgramResponse;
+import kr.go.mapo.mpyouth.payload.response.ProgramYouthResponse;
 import kr.go.mapo.mpyouth.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,23 +22,23 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
 @RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "청소년 프로그램")
 @Slf4j
 public class ProgramController {
     private final ProgramService programService;
 
-    //                    @ApiResponses({
-//                            @ApiResponse(code = 200, message = "MpYouth API 테스트"),
-//                            @ApiResponse(code = 500, message = "서버 오류"),
-//                    })
 
-
+    @Operation(summary = "청소년 프로그램 상세 조회*", description = "청소년 프로그램의 상세 내용을 조회합니다",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @GetMapping("/program/{id}")
     public ResponseEntity<CustomApiResponse<ProgramResponse>> getProgram(@PathVariable("id") Long id) {
         ProgramResponse findProgram = programService.findOne(id);
@@ -44,24 +52,34 @@ public class ProgramController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "청소년 프로그램 전체 조회*", description = "모든 청소년 프로그램의 목록을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @GetMapping("/program")
-    public ResponseEntity<CustomApiResponse<List<ProgramResponse>>> getPrograms() {
-        List<ProgramResponse> programs = programService.findPrograms();
+    public ResponseEntity<?> getPrograms(@PageableDefault(size = 10) Pageable pageable) {
+        Page<ProgramYouthResponse> youthPrograms = programService.findYouthPrograms(pageable);
 
-        CustomApiResponse<List<ProgramResponse>> response = CustomApiResponse.<List<ProgramResponse>>builder()
+        CustomApiResponse<?> response = CustomApiResponse.builder()
                 .success(ApiStatus.SUCCESS)
                 .message("Program 전체 조회")
-                .data(programs)
+                .data(youthPrograms)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "청소년 프로그램 저장*", description = "청소년 프로그램을 저장합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @PostMapping(value = "/program", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
-    public ResponseEntity<?> saveProgram(
-            @Validated @ModelAttribute ProgramRequest programRequest,
+    public ResponseEntity<CustomApiResponse<ProgramResponse>> saveProgram(
+            @Validated @ModelAttribute("programRequest") ProgramRequest programRequest,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             HttpServletRequest request
     ) throws Exception {
@@ -88,18 +106,23 @@ public class ProgramController {
     }
 
 
+    @Operation(summary = "청소년 프로그램 수정*", description = "청소년 프로그램의 내용을 수정합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @PutMapping(value = "/program/{id}", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
     public ResponseEntity<CustomApiResponse<ProgramResponse>> updateProgram(
             @PathVariable("id") Long id,
-            @Validated @ModelAttribute ProgramRequest programRequest,
+            @Validated @ModelAttribute ProgramUpdateRequest updateRequest,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             HttpServletRequest request
     ) throws IOException {
-        programRequest.setProgramId(id);
+        updateRequest.setProgramId(id);
 
-        log.info("{}", programRequest);
+        log.info("{}", updateRequest);
 
         String fileUri = request.getScheme()
                 + "://"
@@ -107,7 +130,7 @@ public class ProgramController {
                 + ":"
                 + request.getLocalPort();
 
-        ProgramResponse updateProgramRequest = programService.updateProgram(programRequest, imageFiles, fileUri);
+        ProgramResponse updateProgramRequest = programService.updateProgram(updateRequest, imageFiles, fileUri);
 
         CustomApiResponse<ProgramResponse> response = CustomApiResponse.<ProgramResponse>builder()
                 .success(ApiStatus.SUCCESS)
@@ -118,6 +141,11 @@ public class ProgramController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "청소년 프로그램 삭제*", description = "청소년 프로그램을 삭제합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
     @DeleteMapping("/program/{id}")
     public ResponseEntity<CustomApiResponse<ProgramResponse>> deleteProgram(@PathVariable("id") Long id) {
         log.info("id : {}", id);
@@ -127,6 +155,30 @@ public class ProgramController {
                 .success(ApiStatus.SUCCESS)
                 .message("Program 삭제")
                 .data(deleteProgramRequest)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(summary = "청소년 프로그램 검색", description = "청소년 프로그램 내용을 검색합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
+    @GetMapping("/program/search")
+    public ResponseEntity<CustomApiResponse<?>> searchProgramKeyword(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        log.info(pageable.toString());
+        Page<ProgramYouthResponse> byTitle = programService.findByKeyword(keyword, pageable);
+
+        log.info(String.valueOf(byTitle.getClass()));
+
+        CustomApiResponse<?> response = CustomApiResponse.builder()
+                .success(ApiStatus.SUCCESS)
+                .message("타이틀 검색, 페이징")
+                .data(byTitle)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
