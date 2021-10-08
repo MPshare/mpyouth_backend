@@ -75,7 +75,7 @@ public class AuthController {
 
 
     @PostMapping("/token")
-    @Operation(summary = "토크 재발급", description = "refreshToken을 이용하여 accessToken,refreshToken을 재발급받습니다.", responses = {
+    @Operation(summary = "토큰 재발급", description = "refreshToken을 이용하여 accessToken,refreshToken을 재발급받습니다.", responses = {
             @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
             @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
             @ApiResponse(responseCode = "404", description = "NOT_FOUND"),
