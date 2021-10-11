@@ -23,13 +23,11 @@ public abstract class ProgramMapper {
 //    @Autowired
     private String apiPath;
 
-    @Mapping(source = "programId", target = "id")
     @Mapping(source = "organizationId", target = "organization.id")
     @Mapping(source = "categoryId", target = "category.id")
-    @Mapping(source = "programFiles", target = "programFiles")
+//    @Mapping(source = "programFiles", target = "programFiles")
     public abstract Program saveDtoToProgram(ProgramRequest programRequest);
 
-    @Mapping(source = "id", target = "programId")
     @Mapping(source = "programFiles", target = "programFiles")
     @Mapping(source = "category", target = "category")
     public abstract ProgramResponse getProgramToDto(Program program);

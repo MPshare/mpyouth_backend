@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/donation")
-    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> getDonations(Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> getDonations(@PageableDefault(size = 10) Pageable pageable) {
         Page<DonationResponse> donations = donationService.getDonations(pageable);
 
         CustomApiResponse<Page<DonationResponse>> response = CustomApiResponse.<Page<DonationResponse>>builder()
@@ -86,7 +87,7 @@ public class DonationController {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
-    @PutMapping("/donation/{id}")
+    @PatchMapping("/donation/{id}")
     public ResponseEntity<CustomApiResponse<DonationResponse>> updateDonation(@PathVariable("id") Long id, @RequestBody DonationRequest donationRequest) {
         log.info(String.valueOf(donationRequest));
         DonationResponse updateDonation = donationService.updateDonation(id, donationRequest);
@@ -125,7 +126,7 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/donation/search")
-    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> searchDonation(@RequestParam("keyword") String keyword, Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> searchDonation(@RequestParam("keyword") String keyword, @PageableDefault(size = 10) Pageable pageable) {
         Page<DonationResponse> donationResponses = donationService.searchDonation(keyword, pageable);
 
         CustomApiResponse<Page<DonationResponse>> response = CustomApiResponse.<Page<DonationResponse>>builder()

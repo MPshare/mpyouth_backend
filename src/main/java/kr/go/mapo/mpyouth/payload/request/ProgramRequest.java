@@ -3,6 +3,7 @@ package kr.go.mapo.mpyouth.payload.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
@@ -21,53 +22,23 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@ApiModel(value = "프로그램 저장")
+@Api(tags = "청소년 프로그램 request")
 @Getter
 @Setter
 @ToString
+@ApiModel
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-//@ApiModel(description = "프로그램 저장 request")
-public class ProgramRequest {
-    private Long programId;
-
-    //    @NotBlank(message = "타이틀은 공백일 수 없습니다.")
-    @ApiModelProperty(required = true, example = "RECRUTING")
-    private String title;
-    //    @NotBlank(message = "설명은 공백일 수 없습니다.")
-    @NotBlank
-    private String description;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime endDate;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime recruitStartDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime recruitEndDate;
-    private Integer recruitNumber;
-    private String location;
-    private String managerName;
-    private String managerContact;
-    private String url;
-    @Schema(description = "상태", allowableValues = {"RECRUITING", "DONE"})
-    private RecruitStatus recruitStatus;
+public class ProgramRequest extends ProgramBaseRequest {
+    @Schema(description = "참가비", example = "0", required = true)
+    @ApiModelProperty(name = "entryFee", value = "참가비", notes = "참가비 내용", example = "0", required = true)
     private Integer entryFee;
+    @Schema(description = "대상연령", example = "초|중|고", required = true)
+    @ApiModelProperty(value = "대상연령", example = "초|중|고", required = true)
     private String targetAge;
-    private String caution;
-    private String period;
-    private VolunteerType volunteerType;
 
-    private Long organizationId;
+//    private Long organizationId;
+//    private Long categoryId;
 
-    private Long categoryId;
+//    private List<ProgramFileResponse> programFiles;
 
-    private List<ProgramFileResponse> programFiles;
-
-//    private Category category;
 }

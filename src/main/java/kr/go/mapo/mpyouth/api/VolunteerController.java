@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -109,7 +110,7 @@ public class VolunteerController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/volunteer")
-    public ResponseEntity<CustomApiResponse<Page<VolunteerResponse>>> getVolunteerList(Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<VolunteerResponse>>> getVolunteerList(@PageableDefault(size = 10) Pageable pageable) {
         Page<VolunteerResponse> volunteerList = volunteerService.findVolunteerList(pageable);
 
         CustomApiResponse<Page<VolunteerResponse>> response = CustomApiResponse.<Page<VolunteerResponse>>builder()
@@ -128,7 +129,7 @@ public class VolunteerController {
     @GetMapping("/volunteer/search")
     public ResponseEntity<CustomApiResponse<Page<VolunteerResponse>>> searchVolunteer(
             @Parameter(name = "keyword", description = "검색용 키워드", required = true)
-            @RequestParam("keyword") String keyword, Pageable pageable
+            @RequestParam("keyword") String keyword, @PageableDefault(size = 10) Pageable pageable
     ) {
         Page<VolunteerResponse> volunteerResponses = volunteerService.searchVolunteer(keyword, pageable);
         CustomApiResponse<Page<VolunteerResponse>> response = CustomApiResponse.<Page<VolunteerResponse>>builder()
