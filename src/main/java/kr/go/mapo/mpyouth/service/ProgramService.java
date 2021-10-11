@@ -173,10 +173,10 @@ public class ProgramService {
     }
 
     @Transactional
-    public ProgramResponse updateProgram(ProgramUpdateRequest programRequest, List<MultipartFile> imageFiles, String fileUri) throws IOException {
-        Long updateId = programRequest.getProgramId();
+    public ProgramResponse updateProgram(Long id, ProgramUpdateRequest programRequest, List<MultipartFile> imageFiles, String fileUri) throws IOException {
+//        Long updateId = programRequest.getProgramId();
         String filePath = fileUri + uriPath;
-        Program updateProgram = programRepository.findById(updateId).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
+        Program updateProgram = programRepository.findById(id).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
 
         if (imageFiles != null && !imageFiles.isEmpty()) {
             updateProgram.getProgramFiles().clear();
@@ -188,7 +188,7 @@ public class ProgramService {
             entityManager.flush();
             entityManager.clear();
 
-            updateProgram = programRepository.findById(updateId).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
+            updateProgram = programRepository.findById(id).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
         }
         //
         //

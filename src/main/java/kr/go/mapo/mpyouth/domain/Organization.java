@@ -16,7 +16,6 @@ import java.util.List;
 @Builder
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
-
 public class Organization extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

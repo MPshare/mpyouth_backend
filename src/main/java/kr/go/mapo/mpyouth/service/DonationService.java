@@ -8,6 +8,8 @@ import kr.go.mapo.mpyouth.payload.response.DonationResponse;
 import kr.go.mapo.mpyouth.repository.DonationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +32,10 @@ public class DonationService {
         return donationMapper.getDtoToDonation(donation);
     }
 
-    public List<DonationResponse> getDonations(){
-        List<Donation> donations = donationRepository.findAll();
+    public Page<DonationResponse> getDonations(Pageable pageable){
+        Page<Donation> all = donationRepository.findAll(pageable);
 
-        return donationMapper.getDtosToDonations(donations);
+        return all.map(donationMapper::getDtoToDonation);
     }
 
     @Transactional
@@ -67,5 +69,11 @@ public class DonationService {
         donationRepository.deleteById(id);
 
         return donationMapper.getDtoToDonation(donation);
+    }
+
+    public Page<DonationResponse> searchDonation(String keyword, Pageable pageable){
+        Page<Donation> byLifeDonation = donationRepository.findByLifeDonation(keyword, pageable);
+
+        return byLifeDonation.map(donationMapper::getDtoToDonation);
     }
 }

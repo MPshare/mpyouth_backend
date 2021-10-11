@@ -18,80 +18,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
-@ToString(exclude = {"organization", "category", "programFiles", "programThumbnail"})
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
-
-public class Program extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "program_id")
-    private Long id;
-
-    @NotNull
-    @NotBlank
-    private String title;
-    @NotNull
-//    @NotBlank
-    private String description;
-
-    @Future
-    private LocalDateTime startDate;
-    @Future
-    private LocalDateTime endDate;
-
-    @Future
-    private LocalDateTime recruitStartDate;
-    @Future
-    private LocalDateTime recruitEndDate;
-
-    @NotNull
-    private Integer recruitNumber;
-
-    @NotNull
-    @NotBlank
-    private String location;
-
-    @NotNull
-    @NotBlank
-    private String managerName;
-
-    @NotNull
-    @NotBlank
-    private String managerContact;
-
-    @NotNull
-    @NotBlank
-    private String url;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private RecruitStatus recruitStatus;
+public class Program extends ProgramBaseEntity {
 
     private Integer entryFee;
-
     private String targetAge;
-
-    @NotNull
-    @NotBlank
-    private String caution;
-
-    private String period;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private VolunteerType volunteerType;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "oraganization_fk")
-    @JsonIgnore
-    private Organization organization;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_fk")
-    @JsonIgnore
-    private Category category;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProgramFile> programFiles = new ArrayList<>();
@@ -100,10 +32,12 @@ public class Program extends BaseEntity {
     @JsonIgnore
     private ProgramThumbnail programThumbnail;
 
-
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-        organization.getPrograms().add(this);
+    @Builder
+    public Program(Long id, String title, String description, String location, Integer recruitNumber, LocalDateTime recruitStartDate, LocalDateTime recruitEndDate, LocalDateTime startDate, LocalDateTime endDate, String url, String managerName, String managerContact, RecruitStatus recruitStatus, ContentsStatus contentsStatus, Organization organization, Category category, Integer entryFee, String targetAge, List<ProgramFile> programFiles, ProgramThumbnail programThumbnail) {
+        super(id, title, description, location, recruitNumber, recruitStartDate, recruitEndDate, startDate, endDate, url, managerName, managerContact, recruitStatus, contentsStatus, organization, category);
+        this.entryFee = entryFee;
+        this.targetAge = targetAge;
+        this.programFiles = programFiles;
+        this.programThumbnail = programThumbnail;
     }
-
 }

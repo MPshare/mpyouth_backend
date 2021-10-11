@@ -1,5 +1,9 @@
 package kr.go.mapo.mpyouth.api;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.go.mapo.mpyouth.domain.Category;
 import kr.go.mapo.mpyouth.global.mapper.CategoryMapper;
 import kr.go.mapo.mpyouth.payload.response.CategoryResponse;
@@ -17,10 +21,16 @@ import java.util.List;
 @RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "카테고리")
 public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
+    @Operation(summary = "카테고리 전체 조회", description = "카테고리 목록을 조회합니다.",
+    responses = {
+            @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+            @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+    })
     @GetMapping("/category")
     public ResponseEntity<CustomApiResponse<List<CategoryResponse>>> getCategories(){
         List<Category> all = categoryRepository.findAll();

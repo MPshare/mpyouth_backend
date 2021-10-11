@@ -1,6 +1,7 @@
 package kr.go.mapo.mpyouth.api;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.ProgramRequest;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -58,10 +60,10 @@ public class ProgramController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/program")
-    public ResponseEntity<?> getPrograms(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<ProgramYouthResponse>>> getPrograms(@PageableDefault(size = 10) Pageable pageable) {
         Page<ProgramYouthResponse> youthPrograms = programService.findYouthPrograms(pageable);
 
-        CustomApiResponse<?> response = CustomApiResponse.builder()
+        CustomApiResponse<Page<ProgramYouthResponse>> response = CustomApiResponse.<Page<ProgramYouthResponse>>builder()
                 .success(ApiStatus.SUCCESS)
                 .message("Program 전체 조회")
                 .data(youthPrograms)
@@ -75,11 +77,13 @@ public class ProgramController {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
-    @PostMapping(value = "/program", consumes = {
-            MediaType.MULTIPART_FORM_DATA_VALUE
-    })
+    @PostMapping(
+            value = "/program",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
     public ResponseEntity<CustomApiResponse<ProgramResponse>> saveProgram(
-            @Validated @ModelAttribute("programRequest") ProgramRequest programRequest,
+            @ApiParam @ModelAttribute("programRequest") ProgramRequest programRequest,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             HttpServletRequest request
     ) throws Exception {
@@ -116,11 +120,11 @@ public class ProgramController {
     })
     public ResponseEntity<CustomApiResponse<ProgramResponse>> updateProgram(
             @PathVariable("id") Long id,
-            @Validated @ModelAttribute ProgramUpdateRequest updateRequest,
+            @ModelAttribute ProgramUpdateRequest updateRequest,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             HttpServletRequest request
     ) throws IOException {
-        updateRequest.setProgramId(id);
+//        updateRequest(id);
 
         log.info("{}", updateRequest);
 
@@ -130,7 +134,7 @@ public class ProgramController {
                 + ":"
                 + request.getLocalPort();
 
-        ProgramResponse updateProgramRequest = programService.updateProgram(updateRequest, imageFiles, fileUri);
+        ProgramResponse updateProgramRequest = programService.updateProgram(id, updateRequest, imageFiles, fileUri);
 
         CustomApiResponse<ProgramResponse> response = CustomApiResponse.<ProgramResponse>builder()
                 .success(ApiStatus.SUCCESS)
@@ -166,7 +170,7 @@ public class ProgramController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/program/search")
-    public ResponseEntity<CustomApiResponse<?>> searchProgramKeyword(
+    public ResponseEntity<CustomApiResponse<Page<ProgramYouthResponse>>> searchProgramKeyword(
             @RequestParam(value = "keyword", required = false) String keyword,
             @PageableDefault(size = 10) Pageable pageable
     ) {
@@ -175,7 +179,7 @@ public class ProgramController {
 
         log.info(String.valueOf(byTitle.getClass()));
 
-        CustomApiResponse<?> response = CustomApiResponse.builder()
+        CustomApiResponse<Page<ProgramYouthResponse>> response = CustomApiResponse.<Page<ProgramYouthResponse>>builder()
                 .success(ApiStatus.SUCCESS)
                 .message("타이틀 검색, 페이징")
                 .data(byTitle)

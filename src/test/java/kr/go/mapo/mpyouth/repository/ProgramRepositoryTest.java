@@ -43,9 +43,6 @@ class ProgramRepositoryTest {
                     .recruitStatus(RecruitStatus.RECRUITING)
                     .entryFee(0)
                     .targetAge("대상연령")
-                    .caution("주의사항")
-                    .period("기간")
-                    .volunteerType(VolunteerType.INDIVIDUAL)
                     .build();
             programRepository.save(program);
         }
@@ -79,9 +76,6 @@ class ProgramRepositoryTest {
                 .recruitStatus(RecruitStatus.RECRUITING)
                 .entryFee(0)
                 .targetAge("대상연령")
-                .caution("주의사항")
-                .period("기간")
-                .volunteerType(VolunteerType.INDIVIDUAL)
                 .build();
         programRepository.save(program);
 
@@ -105,9 +99,6 @@ class ProgramRepositoryTest {
                 .recruitStatus(RecruitStatus.RECRUITING)
                 .entryFee(0)
                 .targetAge("대상연령")
-                .caution("주의사항")
-                .period("기간")
-                .volunteerType(VolunteerType.INDIVIDUAL)
                 .build();
         programRepository.save(program);
 
