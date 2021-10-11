@@ -1,10 +1,16 @@
 package kr.go.mapo.mpyouth.config;
 
+import com.fasterxml.classmate.TypeResolver;
+import kr.go.mapo.mpyouth.payload.request.RequestPage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
@@ -14,15 +20,19 @@ import java.util.Arrays;
 import java.util.List;
 
 
-
 @Configuration
+@RequiredArgsConstructor
 public class SwaggerConfig {
+    private final TypeResolver typeResolver;
 
     @Bean
     public Docket swagger() {
         return new Docket(DocumentationType.OAS_30)
                 .ignoredParameterTypes(java.sql.Date.class)
 //                .forCodeGeneration(true)
+                .alternateTypeRules(
+                        AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(RequestPage.class))
+                )
                 .apiInfo(apiInfo())
                 .useDefaultResponseMessages(false)
 
@@ -34,7 +44,7 @@ public class SwaggerConfig {
                 .build();
     }
 
-    private ApiInfo apiInfo(){
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("마포유스 테스트 API 타이틀")
                 .description("마포유스 테스트 API 상세소개 및 사용법 등")
@@ -42,7 +52,6 @@ public class SwaggerConfig {
                 .version("1.0")
                 .build();
     }
-
 
 
     private SecurityContext securityContext() {
@@ -56,7 +65,7 @@ public class SwaggerConfig {
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
-       }
+    }
 
     private ApiKey apiKey() {
         return new ApiKey("Authorization", "Authorization", "header");

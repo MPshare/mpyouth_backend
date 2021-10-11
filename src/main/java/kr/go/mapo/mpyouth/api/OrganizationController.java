@@ -2,6 +2,9 @@ package kr.go.mapo.mpyouth.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
@@ -28,7 +31,11 @@ public class OrganizationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @PostMapping("/api/organization")
-    public ResponseEntity<CustomApiResponse<OrganizationResponse>> createOrganization(@RequestBody OrganizationRequest organizationRequest) {
+    public ResponseEntity<CustomApiResponse<OrganizationResponse>> createOrganization(
+//           @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "기관 저장용 Request",
+//           content = @Content(schema = @Schema(implementation = OrganizationRequest.class)))
+           @RequestBody OrganizationRequest organizationRequest
+    ) {
         OrganizationResponse organizationResponse = organizationService.saveOrganization(organizationRequest);
 
         CustomApiResponse<OrganizationResponse> response = CustomApiResponse.<OrganizationResponse>builder()

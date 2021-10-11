@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@ApiModel(description = "프로그램 저장")
+@ApiModel(value = "프로그램 저장")
 @Getter
 @Setter
 @ToString
