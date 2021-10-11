@@ -9,6 +9,9 @@ import kr.go.mapo.mpyouth.payload.response.DonationResponse;
 import kr.go.mapo.mpyouth.service.DonationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +32,10 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/donation/{id}")
-    public ResponseEntity<?> getDonation(@PathVariable("id") Long id) {
+    public ResponseEntity<CustomApiResponse<DonationResponse>> getDonation(@PathVariable("id") Long id) {
         DonationResponse donation = donationService.getDonation(id);
 
-        CustomApiResponse<?> response = CustomApiResponse.builder()
+        CustomApiResponse<DonationResponse> response = CustomApiResponse.<DonationResponse>builder()
                 .success(ApiStatus.SUCCESS)
                 .message("재능기부 단일조회")
                 .data(donation)
@@ -47,10 +50,10 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/donation")
-    public ResponseEntity<CustomApiResponse<List<DonationResponse>>> getDonations() {
-        List<DonationResponse> donations = donationService.getDonations();
+    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> getDonations(Pageable pageable) {
+        Page<DonationResponse> donations = donationService.getDonations(pageable);
 
-        CustomApiResponse<List<DonationResponse>> response = CustomApiResponse.<List<DonationResponse>>builder()
+        CustomApiResponse<Page<DonationResponse>> response = CustomApiResponse.<Page<DonationResponse>>builder()
                 .success(ApiStatus.SUCCESS)
                 .message("전체조회")
                 .data(donations)
@@ -65,11 +68,11 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @PostMapping("/donation")
-    public ResponseEntity<?> saveDonation(@RequestBody DonationRequest donationRequest) {
+    public ResponseEntity<CustomApiResponse<DonationResponse>> saveDonation(@RequestBody DonationRequest donationRequest) {
         log.info(String.valueOf(donationRequest));
         DonationResponse donationResponse = donationService.saveDonation(donationRequest);
 
-        CustomApiResponse<?> response = CustomApiResponse.builder()
+        CustomApiResponse<DonationResponse> response = CustomApiResponse.<DonationResponse>builder()
                 .success(ApiStatus.SUCCESS)
                 .message("재능기부 저장")
                 .data(donationResponse)
@@ -84,11 +87,11 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @PutMapping("/donation/{id}")
-    public ResponseEntity<?> updateDonation(@PathVariable("id") Long id, @RequestBody DonationRequest donationRequest) {
+    public ResponseEntity<CustomApiResponse<DonationResponse>> updateDonation(@PathVariable("id") Long id, @RequestBody DonationRequest donationRequest) {
         log.info(String.valueOf(donationRequest));
         DonationResponse updateDonation = donationService.updateDonation(id, donationRequest);
 
-        CustomApiResponse<?> response = CustomApiResponse.builder()
+        CustomApiResponse<DonationResponse> response = CustomApiResponse.<DonationResponse>builder()
                 .success(ApiStatus.SUCCESS)
                 .message("재능기부 수정")
                 .data(updateDonation)
@@ -97,16 +100,16 @@ public class DonationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "청소년 프로그램 상세 조회", description = "청소년 프로그램의 상세 내용을 조회합니다",
+    @Operation(summary = "재능기부 삭제", description = "재능기부를 삭제합니다.",
             responses = {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @DeleteMapping("/donation/{id}")
-    public ResponseEntity<?> deleteDonation(@PathVariable("id") Long id) {
+    public ResponseEntity<CustomApiResponse<DonationResponse>> deleteDonation(@PathVariable("id") Long id) {
         DonationResponse deleteDonation = donationService.deleteDonation(id);
 
-        CustomApiResponse<?> response = CustomApiResponse.builder()
+        CustomApiResponse<DonationResponse> response = CustomApiResponse.<DonationResponse>builder()
                 .success(ApiStatus.SUCCESS)
                 .message("재능기부 삭제")
                 .data(deleteDonation)
@@ -115,4 +118,22 @@ public class DonationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    @Operation(summary = "재능기부 검색", description = "입력된 키워드가 활동이름, 활동상세에 포함된 재능기부 목록을 출력합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
+                    @ApiResponse(responseCode = "404", description = "NOT_FOUND")
+            })
+    @GetMapping("/donation/search")
+    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> searchDonation(@RequestParam("keyword") String keyword, Pageable pageable) {
+        Page<DonationResponse> donationResponses = donationService.searchDonation(keyword, pageable);
+
+        CustomApiResponse<Page<DonationResponse>> response = CustomApiResponse.<Page<DonationResponse>>builder()
+                .success(ApiStatus.SUCCESS)
+                .message("재능기부 검색")
+                .data(donationResponses)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
