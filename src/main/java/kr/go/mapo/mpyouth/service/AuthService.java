@@ -135,7 +135,6 @@ public class AuthService {
 
         return new LoginResponse(accessToken,
                 refreshToken,
-                userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles);
