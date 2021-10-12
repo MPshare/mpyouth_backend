@@ -35,7 +35,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import static  kr.go.mapo.mpyouth.common.ExceptionEnum.*;
+
+import static kr.go.mapo.mpyouth.common.ExceptionEnum.*;
 
 @Service
 @RequiredArgsConstructor
@@ -70,18 +71,22 @@ public class AuthService {
             throw new ApiException(ALREADY_REGISTERED_EMAIL);
         }
 
-        Organization organization = organizationRepository.findById(signUpRequest.getOrganizationId())
-                .orElseThrow(() ->
-                        new ApiException(NOT_FOUND_ORGANIZATION_WITH_ORGANIZATION_ID));
 
         User user = User.builder()
                 .adminLoginId(signUpRequest.getAdminLoginId())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .username(signUpRequest.getUsername())
                 .email(signUpRequest.getEmail())
-                .organization(organization)
                 .phone(signUpRequest.getPhone())
                 .build();
+
+
+        if (signUpRequest.getOrganizationId() != null) {
+            Organization organization = organizationRepository.findById(signUpRequest.getOrganizationId())
+                    .orElseThrow(() ->
+                            new ApiException(NOT_FOUND_ORGANIZATION_WITH_ORGANIZATION_ID));
+            user.setOrganization(organization);
+        }
 
 
         Set<String> strRoles = signUpRequest.getRoles();
@@ -156,12 +161,12 @@ public class AuthService {
             jwtUtils.isValidateJwtToken(refreshToken);
             String adminLoginId = jwtUtils.getUserNameFromJwtToken(refreshToken);
 
-            if (redisUtils.getData(adminLoginId) == null || redisUtils.getData(adminLoginId).equals(refreshToken)==false) {
+            if (redisUtils.getData(adminLoginId) == null || redisUtils.getData(adminLoginId).equals(refreshToken) == false) {
                 throw new CustomJwtException(EXPIRED_REFRESH_TOKEN);
             }
 
             UserDetails user = userDetailsService.loadUserByUsername(adminLoginId);
-            CustomAuthenticationToken authentication = new CustomAuthenticationToken(user,null,user.getAuthorities());
+            CustomAuthenticationToken authentication = new CustomAuthenticationToken(user, null, user.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String newAccessToken = jwtUtils.generateAccessToken(authentication);
@@ -170,7 +175,7 @@ public class AuthService {
             redisUtils.setDataExpire(adminLoginId, newRefreshToken, refreshExpirationMs);
             return new TokenResponse(newAccessToken, newRefreshToken);
 
-        }catch (SignatureException e) {
+        } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
             throw new CustomJwtException(INVALID_JWT_SIGNATURE);
         } catch (MalformedJwtException e) {
