@@ -14,7 +14,7 @@ public class LoginRequest {
 
     @NotBlank
 
-    @Schema(description = "아이디",  nullable = false)
+    @Schema(description = "비밀번호",  nullable = false)
     private String password;
 
 }
