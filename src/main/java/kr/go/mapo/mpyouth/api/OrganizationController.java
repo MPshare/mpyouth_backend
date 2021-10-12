@@ -87,7 +87,7 @@ public class OrganizationController {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
-    @PutMapping("/api/organization/{id}")
+    @PatchMapping("/api/organization/{id}")
     public ResponseEntity<CustomApiResponse<OrganizationResponse>> updateOrganization(
             @PathVariable("id") Long id,
             @RequestBody OrganizationRequest organizationRequest

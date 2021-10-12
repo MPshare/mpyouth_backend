@@ -115,7 +115,7 @@ public class ProgramController {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
-    @PutMapping(value = "/program/{id}", consumes = {
+    @PatchMapping(value = "/program/{id}", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
     public ResponseEntity<CustomApiResponse<ProgramResponse>> updateProgram(
