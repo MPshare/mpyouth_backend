@@ -3,6 +3,7 @@ package kr.go.mapo.mpyouth.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.ProgramRequest;
 import kr.go.mapo.mpyouth.payload.request.ProgramUpdateRequest;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -83,7 +85,7 @@ public class ProgramController {
             produces = {MediaType.APPLICATION_JSON_VALUE}
     )
     public ResponseEntity<CustomApiResponse<ProgramResponse>> saveProgram(
-            @ApiParam @ModelAttribute("programRequest") ProgramRequest programRequest,
+            @Validated @ModelAttribute("programRequest") ProgramRequest programRequest,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             HttpServletRequest request
     ) throws Exception {

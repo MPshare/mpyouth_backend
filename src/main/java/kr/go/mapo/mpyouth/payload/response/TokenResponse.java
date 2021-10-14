@@ -1,6 +1,5 @@
 package kr.go.mapo.mpyouth.payload.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 

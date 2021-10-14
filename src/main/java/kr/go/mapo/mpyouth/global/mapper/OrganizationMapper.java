@@ -1,6 +1,7 @@
 package kr.go.mapo.mpyouth.global.mapper;
 
 import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
+import kr.go.mapo.mpyouth.payload.request.OrganizationUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.OrganizationResponse;
 import kr.go.mapo.mpyouth.domain.Organization;
 import org.mapstruct.*;
@@ -21,5 +22,5 @@ public interface OrganizationMapper {
     List<OrganizationResponse> getOrganizationsToResponses(List<Organization> organizations);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateDtoToOrganization(OrganizationRequest organizationRequest, @MappingTarget Organization organization);
+    void updateDtoToOrganization(OrganizationUpdateRequest organizationUpdateRequest, @MappingTarget Organization organization);
 }

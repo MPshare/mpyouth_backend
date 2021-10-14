@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.LifeLongEduRequest;
+import kr.go.mapo.mpyouth.payload.request.LifeLongEduUpdateRequest;
 import kr.go.mapo.mpyouth.payload.request.RequestPage;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.payload.response.LifeLongEduResponse;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -51,7 +53,7 @@ public class LifeLongEduController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @PostMapping("/life-long-edu")
-    public ResponseEntity<CustomApiResponse<LifeLongEduResponse>> saveLifeLongEdu(@RequestBody LifeLongEduRequest lifeLongEduRequest) {
+    public ResponseEntity<CustomApiResponse<LifeLongEduResponse>> saveLifeLongEdu(@Validated @RequestBody LifeLongEduRequest lifeLongEduRequest) {
         LifeLongEduResponse LifeLongEduResponse = lifeLongEduService.saveEdu(lifeLongEduRequest);
         CustomApiResponse<LifeLongEduResponse> response = CustomApiResponse.<LifeLongEduResponse>builder()
                 .success(ApiStatus.SUCCESS)
@@ -66,9 +68,10 @@ public class LifeLongEduController {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
+
     @PatchMapping("/life-long-edu/{id}")
-    public ResponseEntity<CustomApiResponse<LifeLongEduResponse>> updateLifeLongEdu(@PathVariable Long id, @RequestBody LifeLongEduRequest lifeLongEduRequest) {
-        LifeLongEduResponse LifeLongEduResponse = lifeLongEduService.updateEdu(id, lifeLongEduRequest);
+    public ResponseEntity<CustomApiResponse<LifeLongEduResponse>> updateLifeLongEdu(@PathVariable Long id, @RequestBody LifeLongEduUpdateRequest lifeLongEduUpdateRequest) {
+        LifeLongEduResponse LifeLongEduResponse = lifeLongEduService.updateEdu(id, lifeLongEduUpdateRequest);
 
         CustomApiResponse<LifeLongEduResponse> response = CustomApiResponse.<LifeLongEduResponse>builder()
                 .success(ApiStatus.SUCCESS)

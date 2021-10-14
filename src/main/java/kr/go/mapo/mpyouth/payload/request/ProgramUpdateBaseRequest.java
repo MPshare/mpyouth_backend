@@ -68,6 +68,8 @@ public class ProgramUpdateBaseRequest {
     @Schema(description = "진행상태", example = "BEFORE", allowableValues = {"BEFORE", "PROCEEDING", "DONE"})
     @ApiModelProperty(value = "진행상태", example = "BEFORE", allowableValues = "BEFORE, PROCEEDING, DONE")
     private ContentsStatus contentsStatus;
+    @Schema(description = "주의사항", example = "참여하시기 전에 다음 사항을 숙지해주세요...")
+    private String caution;
     @Schema(description = "기관 ID", example = "1")
     @ApiModelProperty(value = "기관 ID", example = "1")
     private Long organizationId;

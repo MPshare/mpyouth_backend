@@ -2,11 +2,9 @@ package kr.go.mapo.mpyouth.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
+import kr.go.mapo.mpyouth.payload.request.OrganizationUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.payload.response.OrganizationResponse;
 import kr.go.mapo.mpyouth.service.OrganizationService;
@@ -14,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.List;
 public class OrganizationController {
     private final OrganizationService organizationService;
 
+//    @Secured({"ROLE_ADMIN"})
     @Operation(summary = "청소년 기관정보 저장*", description = "청소년 기관 정보를 저장합니다.",
             responses = {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
@@ -34,7 +34,7 @@ public class OrganizationController {
     public ResponseEntity<CustomApiResponse<OrganizationResponse>> createOrganization(
 //           @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "기관 저장용 Request",
 //           content = @Content(schema = @Schema(implementation = OrganizationRequest.class)))
-           @RequestBody OrganizationRequest organizationRequest
+           @Validated @RequestBody OrganizationRequest organizationRequest
     ) {
         OrganizationResponse organizationResponse = organizationService.saveOrganization(organizationRequest);
 
@@ -87,12 +87,13 @@ public class OrganizationController {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
+
     @PatchMapping("/api/organization/{id}")
     public ResponseEntity<CustomApiResponse<OrganizationResponse>> updateOrganization(
             @PathVariable("id") Long id,
-            @RequestBody OrganizationRequest organizationRequest
+            @RequestBody OrganizationUpdateRequest organizationUpdateRequest
     ) {
-        OrganizationResponse organizationResponse = organizationService.updateOrganization(id, organizationRequest);
+        OrganizationResponse organizationResponse = organizationService.updateOrganization(id, organizationUpdateRequest);
 
         CustomApiResponse<OrganizationResponse> response = CustomApiResponse.<OrganizationResponse>builder()
                 .success(ApiStatus.SUCCESS)

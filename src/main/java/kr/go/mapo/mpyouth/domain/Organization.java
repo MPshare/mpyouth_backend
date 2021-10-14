@@ -19,11 +19,17 @@ import java.util.List;
 public class Organization extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private String address;
+
     private String phone;
+
     private String representative;
+
     private String homepage;
+
     private String introduce;
 
     @OneToMany(mappedBy = "organization")

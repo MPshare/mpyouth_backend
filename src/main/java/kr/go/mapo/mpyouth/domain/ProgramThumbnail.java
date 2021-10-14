@@ -19,8 +19,11 @@ public class ProgramThumbnail extends BaseEntity {
     private Long id;
 
     private String originalFileName;
+
     private String fileName;
+
     private String filePath;
+
     private Long fileSize;
 
     @JsonIgnore

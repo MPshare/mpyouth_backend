@@ -2,6 +2,7 @@ package kr.go.mapo.mpyouth.global.mapper;
 
 import kr.go.mapo.mpyouth.domain.Donation;
 import kr.go.mapo.mpyouth.payload.request.DonationRequest;
+import kr.go.mapo.mpyouth.payload.request.DonationUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.DonationResponse;
 import org.mapstruct.*;
 
@@ -20,5 +21,5 @@ public interface DonationMapper {
     List<DonationResponse> getDtosToDonations(List<Donation> donation);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateDtoToDonation(DonationRequest donationRequest, @MappingTarget Donation donation);
+    void updateDtoToDonation(DonationUpdateRequest donationUpdateRequest, @MappingTarget Donation donation);
 }

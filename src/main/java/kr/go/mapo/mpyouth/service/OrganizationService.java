@@ -1,6 +1,8 @@
 package kr.go.mapo.mpyouth.service;
 
+import kr.go.mapo.mpyouth.exception.NotFoundOrganizationException;
 import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
+import kr.go.mapo.mpyouth.payload.request.OrganizationUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.OrganizationResponse;
 import kr.go.mapo.mpyouth.domain.Organization;
 import kr.go.mapo.mpyouth.global.mapper.OrganizationMapper;
@@ -26,7 +28,7 @@ public class OrganizationService {
     }
 
     public OrganizationResponse findOne(Long id) {
-        Organization organization = organizationRepository.findById(id).orElse(null);
+        Organization organization = getOrganization(id);
 
         return organizationMapper.getOrganizationToResponse(organization);
     }
@@ -42,19 +44,23 @@ public class OrganizationService {
     }
 
     @Transactional
-    public OrganizationResponse updateOrganization(Long id, OrganizationRequest organizationRequest) {
-        Organization findOrganization = organizationRepository.findById(id).orElse(null);
+    public OrganizationResponse updateOrganization(Long id, OrganizationUpdateRequest organizationUpdateRequest) {
+        Organization findOrganization = getOrganization(id);
 
-        organizationMapper.updateDtoToOrganization(organizationRequest,findOrganization);
+        organizationMapper.updateDtoToOrganization(organizationUpdateRequest, findOrganization);
 
         return organizationMapper.getOrganizationToResponse(findOrganization);
     }
 
     @Transactional
     public OrganizationResponse deleteOrganization(Long id) {
-        Organization organization = organizationRepository.findById(id).orElse(null);
+        Organization organization = getOrganization(id);
         organizationRepository.deleteById(id);
 
         return organizationMapper.getOrganizationToResponse(organization);
+    }
+
+    private Organization getOrganization(Long id) {
+        return organizationRepository.findById(id).orElseThrow(() -> new NotFoundOrganizationException("기관정보가 존재하지 않습니다!"));
     }
 }

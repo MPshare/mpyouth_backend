@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.go.mapo.mpyouth.payload.request.VolunteerRequest;
+import kr.go.mapo.mpyouth.payload.request.VolunteerUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.payload.response.VolunteerResponse;
 import kr.go.mapo.mpyouth.service.VolunteerService;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -53,7 +55,7 @@ public class VolunteerController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @PostMapping("/volunteer")
-    public ResponseEntity<CustomApiResponse<VolunteerResponse>> saveVolunteer(@RequestBody VolunteerRequest volunteerRequest) {
+    public ResponseEntity<CustomApiResponse<VolunteerResponse>> saveVolunteer(@Validated @RequestBody VolunteerRequest volunteerRequest) {
         VolunteerResponse volunteerResponse = volunteerService.saveVolunteer(volunteerRequest);
         CustomApiResponse<VolunteerResponse> response = CustomApiResponse.<VolunteerResponse>builder()
                 .success(ApiStatus.SUCCESS)
@@ -72,9 +74,9 @@ public class VolunteerController {
     public ResponseEntity<CustomApiResponse<VolunteerResponse>> updateVolunteer(
             @Parameter(name = "id", description = "자원봉사 id", required = true)
             @PathVariable Long id,
-            @RequestBody VolunteerRequest volunteerRequest
+            @RequestBody VolunteerUpdateRequest volunteerUpdateRequest
     ) {
-        VolunteerResponse volunteerResponse = volunteerService.updateVolunteer(id, volunteerRequest);
+        VolunteerResponse volunteerResponse = volunteerService.updateVolunteer(id, volunteerUpdateRequest);
 
         CustomApiResponse<VolunteerResponse> response = CustomApiResponse.<VolunteerResponse>builder()
                 .success(ApiStatus.SUCCESS)

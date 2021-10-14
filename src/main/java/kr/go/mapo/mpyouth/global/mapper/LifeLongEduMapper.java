@@ -3,6 +3,7 @@ package kr.go.mapo.mpyouth.global.mapper;
 import kr.go.mapo.mpyouth.domain.LifeLongEdu;
 import kr.go.mapo.mpyouth.domain.Volunteer;
 import kr.go.mapo.mpyouth.payload.request.LifeLongEduRequest;
+import kr.go.mapo.mpyouth.payload.request.LifeLongEduUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.LifeLongEduResponse;
 import org.mapstruct.*;
 
@@ -16,5 +17,5 @@ public interface LifeLongEduMapper {
     LifeLongEduResponse getLifeLongEduToDto(LifeLongEdu lifeLongEdu);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateDtoToLifeLongEdu(LifeLongEduRequest lifeLongEduRequest, @MappingTarget LifeLongEdu lifeLongEdu);
+    void updateDtoToLifeLongEdu(LifeLongEduUpdateRequest lifeLongEduUpdateRequest, @MappingTarget LifeLongEdu lifeLongEdu);
 }

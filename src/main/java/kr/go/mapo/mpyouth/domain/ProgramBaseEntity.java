@@ -24,9 +24,11 @@ public class ProgramBaseEntity extends BaseEntity{
     private String location;//
 
     private Integer recruitNumber; //
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime recruitStartDate;//
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime recruitEndDate;//
@@ -46,8 +48,11 @@ public class ProgramBaseEntity extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private ContentsStatus contentsStatus;
 
+    private String caution;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     private Organization organization;
-    @OneToOne(fetch = FetchType.LAZY)
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     private Category category;
 }

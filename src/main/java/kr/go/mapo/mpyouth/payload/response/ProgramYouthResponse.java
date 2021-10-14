@@ -20,7 +20,6 @@ import java.util.List;
 public class ProgramYouthResponse {
     private Long programId;
 
-//    @NotBlank(message = "타이틀은 공백일 수 없습니다.")
     private String title;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
@@ -40,13 +39,12 @@ public class ProgramYouthResponse {
 
     private RecruitStatus recruitStatus;
     private Integer entryFee;
-    private String caution;
-    private String period;
-    private VolunteerType volunteerType;
+
+
+    private String targetAge;
 
     private OrganizationResponse organization;
 
     private ProgramThumbnailResponse thumbnail;
 
-//    private Category category;
 }

@@ -4,6 +4,7 @@ import kr.go.mapo.mpyouth.domain.Volunteer;
 import kr.go.mapo.mpyouth.exception.NotFoundVolunteerException;
 import kr.go.mapo.mpyouth.global.mapper.VolunteerMapper;
 import kr.go.mapo.mpyouth.payload.request.VolunteerRequest;
+import kr.go.mapo.mpyouth.payload.request.VolunteerUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.VolunteerResponse;
 import kr.go.mapo.mpyouth.repository.VolunteerRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,10 +51,10 @@ public class VolunteerService {
     }
 
     @Transactional
-    public VolunteerResponse updateVolunteer(Long id, VolunteerRequest volunteerRequest) {
+    public VolunteerResponse updateVolunteer(Long id, VolunteerUpdateRequest volunteerUpdateRequest) {
         Volunteer updateVolunteer = volunteerRepository.findById(id).orElseThrow(() -> new NotFoundVolunteerException("조건에 맞는 자원봉사가 없습니다"));
 
-        volunteerMapper.updateDtoToProgram(volunteerRequest, updateVolunteer);
+        volunteerMapper.updateDtoToProgram(volunteerUpdateRequest, updateVolunteer);
 
         return volunteerMapper.getVolunteerToDto(updateVolunteer);
     }

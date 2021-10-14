@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Getter
@@ -18,9 +19,13 @@ import javax.persistence.*;
 public class ProgramFile extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
+
     private String originalFileName;
+
     private String fileName;
+
     private String filePath;
+
     private Long fileSize;
 
     @JsonIgnore

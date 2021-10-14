@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.DonationRequest;
+import kr.go.mapo.mpyouth.payload.request.DonationUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.payload.response.DonationResponse;
 import kr.go.mapo.mpyouth.service.DonationService;
@@ -11,13 +12,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -69,7 +68,7 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @PostMapping("/donation")
-    public ResponseEntity<CustomApiResponse<DonationResponse>> saveDonation(@RequestBody DonationRequest donationRequest) {
+    public ResponseEntity<CustomApiResponse<DonationResponse>> saveDonation(@Validated @RequestBody DonationRequest donationRequest) {
         log.info(String.valueOf(donationRequest));
         DonationResponse donationResponse = donationService.saveDonation(donationRequest);
 
@@ -87,10 +86,11 @@ public class DonationController {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
+
     @PatchMapping("/donation/{id}")
-    public ResponseEntity<CustomApiResponse<DonationResponse>> updateDonation(@PathVariable("id") Long id, @RequestBody DonationRequest donationRequest) {
-        log.info(String.valueOf(donationRequest));
-        DonationResponse updateDonation = donationService.updateDonation(id, donationRequest);
+    public ResponseEntity<CustomApiResponse<DonationResponse>> updateDonation(@PathVariable("id") Long id, @RequestBody DonationUpdateRequest donationUpdateRequest) {
+        log.info(String.valueOf(donationUpdateRequest));
+        DonationResponse updateDonation = donationService.updateDonation(id, donationUpdateRequest);
 
         CustomApiResponse<DonationResponse> response = CustomApiResponse.<DonationResponse>builder()
                 .success(ApiStatus.SUCCESS)

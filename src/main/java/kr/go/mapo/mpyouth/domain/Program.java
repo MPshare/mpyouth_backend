@@ -21,8 +21,10 @@ import java.util.List;
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 public class Program extends ProgramBaseEntity {
-
+    @NotNull
     private Integer entryFee;
+
+    @NotBlank
     private String targetAge;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,8 +35,8 @@ public class Program extends ProgramBaseEntity {
     private ProgramThumbnail programThumbnail;
 
     @Builder
-    public Program(Long id, String title, String description, String location, Integer recruitNumber, LocalDateTime recruitStartDate, LocalDateTime recruitEndDate, LocalDateTime startDate, LocalDateTime endDate, String url, String managerName, String managerContact, RecruitStatus recruitStatus, ContentsStatus contentsStatus, Organization organization, Category category, Integer entryFee, String targetAge, List<ProgramFile> programFiles, ProgramThumbnail programThumbnail) {
-        super(id, title, description, location, recruitNumber, recruitStartDate, recruitEndDate, startDate, endDate, url, managerName, managerContact, recruitStatus, contentsStatus, organization, category);
+    public Program(Long id, String title, String description, String location, Integer recruitNumber, LocalDateTime recruitStartDate, LocalDateTime recruitEndDate, LocalDateTime startDate, LocalDateTime endDate, String url, String managerName, String managerContact, RecruitStatus recruitStatus, ContentsStatus contentsStatus, String caution, Organization organization, Category category, Integer entryFee, String targetAge, List<ProgramFile> programFiles, ProgramThumbnail programThumbnail) {
+        super(id, title, description, location, recruitNumber, recruitStartDate, recruitEndDate, startDate, endDate, url, managerName, managerContact, recruitStatus, contentsStatus, caution, organization, category);
         this.entryFee = entryFee;
         this.targetAge = targetAge;
         this.programFiles = programFiles;
