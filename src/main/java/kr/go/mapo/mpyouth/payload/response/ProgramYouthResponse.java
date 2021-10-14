@@ -40,10 +40,11 @@ public class ProgramYouthResponse {
     private RecruitStatus recruitStatus;
     private Integer entryFee;
 
-
     private String targetAge;
 
     private OrganizationResponse organization;
+
+    private CategoryResponse category;
 
     private ProgramThumbnailResponse thumbnail;
 
