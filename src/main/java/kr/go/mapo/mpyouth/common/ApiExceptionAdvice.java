@@ -23,6 +23,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -76,26 +77,15 @@ public class ApiExceptionAdvice {
                         .build());
     }
 
-    @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, RuntimeException e) {
-        e.printStackTrace();
-        log.error("message : {}, localizedMessage : {}", e.getMessage(), e.getLocalizedMessage());
 
-        return ResponseEntity
-                .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
-                .body(ApiExceptionEntity.builder()
-                        .errorCode(ExceptionEnum.RUNTIME_EXCEPTION.getCode())
-                        .errorMessage(e.getMessage())
-                        .build());
-    }
 
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final AccessDeniedException e) {
 //        e.printStackTrace();
 
         log.error("AccessDeniedException");
-        System.out.println("request:" + request.getHeader("Authorization"));
-        System.out.println("request:" + request.getRequestURI());
+//        System.out.println("request:" + request.getHeader("Authorization"));
+//        System.out.println("request:" + request.getRequestURI());
         return ResponseEntity
                 .status(ExceptionEnum.ACCESS_DENIED_EXCEPTION.getStatus())
                 .body(ApiExceptionEntity.builder()
@@ -151,7 +141,23 @@ public class ApiExceptionAdvice {
                         .build());
     }
 
+    // TODO 리팩토링
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<?> dateTimeFormatError(DateTimeParseException e) {
 
+//        return ResponseEntity
+//                .status(HttpStatus.BAD_REQUEST)
+//                .body("에러");
+
+        ApiExceptionEntity response = ApiExceptionEntity.builder()
+                .errorCode("404")
+                .errorMessage("날짜 형식이 잘못되었습니다.(yyyy-MM-dd HH:mm:ss) 입력한 값 : " + e.getParsedString())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // TODO 리팩토링
     @ExceptionHandler(BindException.class)
     public ResponseEntity<CustomApiResponse<?>> bindExceptionHandling(BindException e, HttpServletRequest request) {
 
@@ -181,6 +187,7 @@ public class ApiExceptionAdvice {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
+    // TODO 리팩토링
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<CustomApiResponse<?>> constraintViolationHandle(ConstraintViolationException e) {
         log.error(e.toString());
@@ -196,14 +203,27 @@ public class ApiExceptionAdvice {
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
-
+    // TODO 리팩토링
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<CustomApiResponse<?>> testApiAdvice(SQLIntegrityConstraintViolationException e) {
         CustomApiResponse<?> response = CustomApiResponse.builder()
                 .success(ApiStatus.FAIL)
-                .message(messageSource.getMessage("constraint.program.og_fk", null, Locale.getDefault()))
+                .message(messageSource.getMessage("constraint.program.fk", null, Locale.getDefault()))
                 .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+//    @ExceptionHandler({RuntimeException.class})
+//    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, RuntimeException e) {
+//        e.printStackTrace();
+//        log.error("message : {}, localizedMessage : {}", e.getMessage(), e.getLocalizedMessage());
+//
+//        return ResponseEntity
+//                .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
+//                .body(ApiExceptionEntity.builder()
+//                        .errorCode(ExceptionEnum.RUNTIME_EXCEPTION.getCode())
+//                        .errorMessage(e.getMessage())
+//                        .build());
+//    }
 
 }

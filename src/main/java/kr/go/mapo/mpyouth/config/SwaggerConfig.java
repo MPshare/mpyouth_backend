@@ -2,10 +2,10 @@ package kr.go.mapo.mpyouth.config;
 
 import com.fasterxml.classmate.TypeResolver;
 import kr.go.mapo.mpyouth.payload.request.RequestPage;
+import kr.go.mapo.mpyouth.payload.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -31,6 +31,9 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.OAS_30)
                 .ignoredParameterTypes(java.sql.Date.class)
 //                .forCodeGeneration(true)
+                .additionalModels(
+                        typeResolver.resolve(ErrorResponse.class)
+                )
                 .alternateTypeRules(
                         AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(RequestPage.class))
                 )
@@ -46,6 +49,18 @@ public class SwaggerConfig {
                 .build();
     }
 
+
+//    @Bean
+//    public OpenAPI swaggerV3(){
+//        return new OpenAPI()
+//                .info(new Info().title("")
+//                        .description("")
+//                        .version("")
+//                        .license(new License().name("").url("")))
+//                .externalDocs(new ExternalDocumentation()
+//                        .description("")
+//                        .url(""));
+//    }
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("마포유스 테스트 API 타이틀")
