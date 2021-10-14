@@ -86,9 +86,9 @@ public class ProgramBaseRequest {
     @NotNull
     private ContentsStatus contentsStatus;
 
-//    @ApiModelProperty(value = "주의사항", example = "참여하시기 전에 다음 사항을 숙지해주세요...", required = true)
+    @ApiModelProperty(value = "주의사항", example = "참여하시기 전에 다음 사항을 숙지해주세요...", required = true)
     @Parameter(name = "caution", in = ParameterIn.QUERY, array = @ArraySchema( schema = @Schema(type = "string")))
-    @NotBlank
+//    @NotBlank
     @Size(max = 2000)
     private String caution;
 
