@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +51,7 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/donation")
-    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> getDonations(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> getDonations(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<DonationResponse> donations = donationService.getDonations(pageable);
 
         CustomApiResponse<Page<DonationResponse>> response = CustomApiResponse.<Page<DonationResponse>>builder()
@@ -126,7 +127,7 @@ public class DonationController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/donation/search")
-    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> searchDonation(@RequestParam("keyword") String keyword, @PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<DonationResponse>>> searchDonation(@RequestParam("keyword") String keyword, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<DonationResponse> donationResponses = donationService.searchDonation(keyword, pageable);
 
         CustomApiResponse<Page<DonationResponse>> response = CustomApiResponse.<Page<DonationResponse>>builder()

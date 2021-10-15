@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,7 +105,7 @@ public class LifeLongEduController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/life-long-edu")
-    public ResponseEntity<CustomApiResponse<Page<LifeLongEduResponse>>> getLifeLongEduList(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<LifeLongEduResponse>>> getLifeLongEduList(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<LifeLongEduResponse> lifeLongEduList = lifeLongEduService.findEduList(pageable);
 
         CustomApiResponse<Page<LifeLongEduResponse>> response = CustomApiResponse.<Page<LifeLongEduResponse>>builder()
@@ -121,7 +122,7 @@ public class LifeLongEduController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/life-long-edu/search")
-    public ResponseEntity<CustomApiResponse<Page<LifeLongEduResponse>>> searchLifeLongEdu(@RequestParam("keyword") String keyword, @Parameter(schema = @Schema(implementation = RequestPage.class)) @PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<LifeLongEduResponse>>> searchLifeLongEdu(@RequestParam("keyword") String keyword, @Parameter(schema = @Schema(implementation = RequestPage.class)) @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<LifeLongEduResponse> LifeLongEduResponses = lifeLongEduService.searchEdu(keyword, pageable);
         CustomApiResponse<Page<LifeLongEduResponse>> response = CustomApiResponse.<Page<LifeLongEduResponse>>builder()
                 .success(ApiStatus.SUCCESS)

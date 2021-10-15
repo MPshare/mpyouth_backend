@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -62,7 +63,7 @@ public class ProgramController {
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
             })
     @GetMapping("/program")
-    public ResponseEntity<CustomApiResponse<Page<ProgramYouthResponse>>> getPrograms(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<CustomApiResponse<Page<ProgramYouthResponse>>> getPrograms(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<ProgramYouthResponse> youthPrograms = programService.findYouthPrograms(pageable);
 
         CustomApiResponse<Page<ProgramYouthResponse>> response = CustomApiResponse.<Page<ProgramYouthResponse>>builder()
@@ -174,7 +175,7 @@ public class ProgramController {
     @GetMapping("/program/search")
     public ResponseEntity<CustomApiResponse<Page<ProgramYouthResponse>>> searchProgramKeyword(
             @RequestParam(value = "keyword", required = false) String keyword,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         log.info(pageable.toString());
         Page<ProgramYouthResponse> byTitle = programService.findByKeyword(keyword, pageable);
