@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,6 +18,8 @@ import java.time.LocalDateTime;
 public class Volunteer extends ProgramBaseEntity{
     @Enumerated(EnumType.STRING)
     private VolunteerType volunteerType;
+
+    @Size(max = 100)
     private String period;
 
     @Builder

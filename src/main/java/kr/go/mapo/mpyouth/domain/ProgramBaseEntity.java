@@ -1,14 +1,13 @@
 package kr.go.mapo.mpyouth.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,38 +15,50 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProgramBaseEntity extends BaseEntity{
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;//
-    private String title;//
-    private String description;//
-    private String location;//
+public class ProgramBaseEntity extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private Integer recruitNumber; //
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime recruitStartDate;//
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime recruitEndDate;//
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime startDate;//
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
-    @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-    private LocalDateTime endDate;//
+    @Size(max = 100)
+    private String title;
 
-    private String url; //
-    private String managerName; //
-    private String managerContact; //
+    @Size(max = 2000)
+    private String description;
+
+    @Size(max = 100)
+    private String location;
+
+    private Integer recruitNumber;
+
+    private LocalDateTime recruitStartDate;
+
+    private LocalDateTime recruitEndDate;
+
+    private LocalDateTime startDate;
+
+    private LocalDateTime endDate;
+
+    @Size(max = 500)
+    private String url;
+    
+    @Size(max = 20)
+    private String managerName;
+
+    @Size(max = 50)
+    private String managerContact;
 
     @Enumerated(EnumType.STRING)
-    private RecruitStatus recruitStatus; //
+    private RecruitStatus recruitStatus;
+    
     @Enumerated(EnumType.STRING)
     private ContentsStatus contentsStatus;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "oraganization_fk")
     private Organization organization;
+    
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_fk")
     private Category category;
 }
