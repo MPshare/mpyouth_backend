@@ -28,6 +28,7 @@ public class OrganizationRequest {
     private String representative;
     @Schema(description = "홈페이지", example = "http://url.com", required = true)
     private String homepage;
+    @Schema(description = "기관소개", example = "안녕하세요 이 기관은..", required = true)
     @Size(max = 1000)
     private String introduce;
 }

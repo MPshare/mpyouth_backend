@@ -12,13 +12,11 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @Api(tags = "평생교육 request")
-public class LifeLongEduRequest extends ProgramBaseRequest{
+public class LifeLongEduUpdateRequest extends ProgramUpdateBaseRequest{
     @Schema(description = "대상연령", example = "초|중|고", required = true)
-    @NotEmpty
     @Size(max = 100)
     private String targetAge;
 
     @Schema(description = "참가비", example = "0", required = true)
-    @NotNull
     private Integer entryFee;
 }

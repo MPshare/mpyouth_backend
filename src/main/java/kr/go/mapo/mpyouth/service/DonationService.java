@@ -1,9 +1,9 @@
 package kr.go.mapo.mpyouth.service;
 
 import kr.go.mapo.mpyouth.domain.Donation;
-import kr.go.mapo.mpyouth.exception.NotFoundDonationException;
 import kr.go.mapo.mpyouth.global.mapper.DonationMapper;
 import kr.go.mapo.mpyouth.payload.request.DonationRequest;
+import kr.go.mapo.mpyouth.payload.request.DonationUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.DonationResponse;
 import kr.go.mapo.mpyouth.repository.DonationRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.List;
+import javax.persistence.NoResultException;
 
 @Slf4j
 @Service
@@ -26,8 +26,7 @@ public class DonationService {
     private final EntityManager entityManager;
 
     public DonationResponse getDonation(Long id){
-        Donation donation = donationRepository.findById(id)
-                .orElseThrow(()->new NotFoundDonationException("조건에 맞는 재능기부가 없습니다."));
+        Donation donation = findEntity(id);
 
         return donationMapper.getDtoToDonation(donation);
     }
@@ -54,17 +53,17 @@ public class DonationService {
     }
 
     @Transactional
-    public DonationResponse updateDonation(Long id, DonationRequest donationRequest){
-        Donation updateDonation = donationRepository.findById(id).orElseThrow(()->new NotFoundDonationException("조건에 맞는 재능기부가 없습니다."));
+    public DonationResponse updateDonation(Long id, DonationUpdateRequest donationUpdateRequest){
+        Donation updateDonation = findEntity(id);
 
-        donationMapper.updateDtoToDonation(donationRequest, updateDonation);
+        donationMapper.updateDtoToDonation(donationUpdateRequest, updateDonation);
 
         return donationMapper.getDtoToDonation(updateDonation);
     }
 
     @Transactional
     public DonationResponse deleteDonation(Long id){
-        Donation donation = donationRepository.findById(id).orElseThrow(()->new NotFoundDonationException("조건에 맞는 재능기부가 없습니다."));
+        Donation donation = findEntity(id);
 
         donationRepository.deleteById(id);
 
@@ -75,5 +74,10 @@ public class DonationService {
         Page<Donation> byLifeDonation = donationRepository.findByLifeDonation(keyword, pageable);
 
         return byLifeDonation.map(donationMapper::getDtoToDonation);
+    }
+
+    private Donation findEntity(Long id) {
+        return donationRepository.findById(id)
+                .orElseThrow(() -> new NoResultException("조건에 맞는 재능기부가 없습니다."));
     }
 }

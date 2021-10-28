@@ -2,6 +2,7 @@ package kr.go.mapo.mpyouth.global.mapper;
 
 import kr.go.mapo.mpyouth.domain.Volunteer;
 import kr.go.mapo.mpyouth.payload.request.VolunteerRequest;
+import kr.go.mapo.mpyouth.payload.request.VolunteerUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.VolunteerResponse;
 import org.mapstruct.*;
 
@@ -12,10 +13,8 @@ public interface VolunteerMapper {
     @Mapping(source = "categoryId", target = "category.id")
     Volunteer saveDtoToVolunteer(VolunteerRequest volunteerRequest);
 
-//    @Mapping(source = "organization.id", target = "organizationId")
-//    @Mapping(source = "category.id", target = "categoryId")
     VolunteerResponse getVolunteerToDto(Volunteer volunteer);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateDtoToProgram(VolunteerRequest volunteerRequest, @MappingTarget Volunteer volunteer);
+    void updateDtoToProgram(VolunteerUpdateRequest volunteerUpdateRequest, @MappingTarget Volunteer volunteer);
 }

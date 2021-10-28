@@ -19,6 +19,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,17 +31,16 @@ import java.util.List;
 @ToString
 @ApiModel
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ProgramRequest extends ProgramBaseRequest {
+public class ProgramYouthRequest extends ProgramBaseRequest {
     @Schema(description = "참가비", example = "0", required = true)
     @ApiModelProperty(name = "entryFee", value = "참가비", notes = "참가비 내용", example = "0", required = true)
+    @NotNull
     private Integer entryFee;
+
     @Schema(description = "대상연령", example = "초|중|고", required = true)
     @ApiModelProperty(value = "대상연령", example = "초|중|고", required = true)
+    @NotEmpty
+    @Size(max = 100)
     private String targetAge;
-
-//    private Long organizationId;
-//    private Long categoryId;
-
-//    private List<ProgramFileResponse> programFiles;
 
 }

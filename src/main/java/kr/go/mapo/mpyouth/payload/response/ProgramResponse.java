@@ -25,7 +25,6 @@ public class ProgramResponse extends ProgramBaseResponse {
     private Integer entryFee;
     private String targetAge;
 
-
     private CategoryResponse category;
 
     private OrganizationResponse organization;

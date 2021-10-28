@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import java.util.List;
 
 @Service
@@ -26,7 +27,7 @@ public class OrganizationService {
     }
 
     public OrganizationResponse findOne(Long id) {
-        Organization organization = organizationRepository.findById(id).orElse(null);
+        Organization organization = findEntity(id);
 
         return organizationMapper.getOrganizationToResponse(organization);
     }
@@ -43,7 +44,7 @@ public class OrganizationService {
 
     @Transactional
     public OrganizationResponse updateOrganization(Long id, OrganizationRequest organizationRequest) {
-        Organization findOrganization = organizationRepository.findById(id).orElse(null);
+        Organization findOrganization = findEntity(id);
 
         organizationMapper.updateDtoToOrganization(organizationRequest,findOrganization);
 
@@ -52,9 +53,13 @@ public class OrganizationService {
 
     @Transactional
     public OrganizationResponse deleteOrganization(Long id) {
-        Organization organization = organizationRepository.findById(id).orElse(null);
+        Organization organization = findEntity(id);
         organizationRepository.deleteById(id);
 
         return organizationMapper.getOrganizationToResponse(organization);
+    }
+
+    private Organization findEntity(Long id) {
+        return organizationRepository.findById(id).orElseThrow(() -> new NoResultException("조건에 맞는 기관정보가 없습니다"));
     }
 }

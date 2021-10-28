@@ -70,19 +70,21 @@ public class AuthService {
             throw new ApiException(ALREADY_REGISTERED_EMAIL);
         }
 
-        Organization organization = organizationRepository.findById(signUpRequest.getOrganizationId())
-                .orElseThrow(() ->
-                        new ApiException(NOT_FOUND_ORGANIZATION_WITH_ORGANIZATION_ID));
-
         User user = User.builder()
                 .adminLoginId(signUpRequest.getAdminLoginId())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .username(signUpRequest.getUsername())
                 .email(signUpRequest.getEmail())
-                .organization(organization)
                 .phone(signUpRequest.getPhone())
                 .build();
 
+
+        if (signUpRequest.getOrganizationId() != null) {
+            Organization organization = organizationRepository.findById(signUpRequest.getOrganizationId())
+                    .orElseThrow(() ->
+                            new ApiException(NOT_FOUND_ORGANIZATION_WITH_ORGANIZATION_ID));
+            user.setOrganization(organization);
+        }
 
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();

@@ -4,10 +4,9 @@ package kr.go.mapo.mpyouth.service;
 import kr.go.mapo.mpyouth.domain.Program;
 import kr.go.mapo.mpyouth.domain.ProgramFile;
 import kr.go.mapo.mpyouth.domain.ProgramThumbnail;
-import kr.go.mapo.mpyouth.exception.NotFoundProgramException;
 import kr.go.mapo.mpyouth.global.mapper.ProgramMapper;
 import kr.go.mapo.mpyouth.payload.request.ProgramFileRequest;
-import kr.go.mapo.mpyouth.payload.request.ProgramRequest;
+import kr.go.mapo.mpyouth.payload.request.ProgramYouthRequest;
 import kr.go.mapo.mpyouth.payload.request.ProgramUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.ProgramResponse;
 import kr.go.mapo.mpyouth.payload.response.ProgramYouthResponse;
@@ -28,11 +27,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -57,82 +55,85 @@ public class ProgramService {
     String uriPath;
 
     @Transactional
-    public ProgramResponse saveProgram(ProgramRequest programRequest, List<MultipartFile> imageFiles, String fileUri) throws IOException {
+    public ProgramResponse saveProgram(ProgramYouthRequest programYouthRequest, List<MultipartFile> imageFiles, String fileUri) throws IOException {
         String filePath = fileUri + uriPath;
 
         log.info("filePath : {}", filePath);
 
-        Program newProgram = programMapper.saveDtoToProgram(programRequest);
+        Program newProgram = programMapper.saveDtoToProgram(programYouthRequest);
         programRepository.save(newProgram);
 
         if (imageFiles != null && !imageFiles.isEmpty()) {
             MultipartFile firstImage = imageFiles.get(0);
 
             ProgramThumbnail programThumbnail = makeThumbnail(firstImage);
-            if (programThumbnail != null) {
-                programThumbnail.setProgram(newProgram);
-                programThumbnailRepository.save(programThumbnail);
-            }
+            thumbnailCheck(newProgram, programThumbnail);
         }
 
-
-        List<ProgramFile> programFiles = saveImageFiles(newProgram, imageFiles);
+        List<ProgramFile> programFiles = saveImageFileList(newProgram, imageFiles);
 
         programFileRepository.saveAll(programFiles);
-
-        //
-
-
-        //
 
         entityManager.flush();
         entityManager.clear();
 
-        Program findProgram = programRepository.findById(newProgram.getId()).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
+        Program findProgram = findEntity(newProgram.getId());
 
-        ProgramResponse programToDto = programMapper.getProgramToDto(findProgram);
-
-        return programToDto;
+        return programMapper.getProgramToDto(findProgram);
 
     }
 
-    private List<ProgramFile> saveImageFiles(Program program, List<MultipartFile> imageFiles) throws IOException {
-        List<ProgramFile> result = new ArrayList<>();
+    @Transactional
+    public ProgramResponse updateProgram(Long id, ProgramUpdateRequest programRequest, List<MultipartFile> imageFiles, String fileUri) throws IOException {
+        String filePath = fileUri + uriPath;
+        Program updateProgram = findEntity(id);
 
         if (imageFiles != null && !imageFiles.isEmpty()) {
+            updateProgram.getProgramFiles().clear();
 
-            for (MultipartFile imageFile : imageFiles) {
-                if (!imageFile.isEmpty()) {
+            List<ProgramFile> programFiles = saveImageFileList(updateProgram, imageFiles);
 
-                    BufferedImage image = ImageIO.read(imageFile.getInputStream());
+            programFileRepository.saveAll(programFiles);
 
-                    String newName = UUID.randomUUID()
-                            + "."
-                            + FilenameUtils.getExtension(imageFile.getOriginalFilename());
+            entityManager.flush();
+            entityManager.clear();
 
-                    ProgramFileRequest programFile = ProgramFileRequest.builder()
-                            .originalFileName(imageFile.getOriginalFilename())
-                            .fileName(newName)
-                            .filePath(dir + newName)
-                            .fileSize(imageFile.getSize() / 1024)
-                            .programId(program.getId())
-                            .build();
-
-                    imageFile.transferTo(new File(dir + newName));
-
-                    ProgramFile newProgramFile = programMapper.saveDtoToProgram(programFile);
-
-//                    Program program = programRepository.findById(programId).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
-                    newProgramFile.setProgram(program);
-
-//                    programFileRepository.save(newProgramFile);
-                    result.add(newProgramFile);
-                }
-            }
+            updateProgram = findEntity(id);
         }
+
+        programMapper.updateDtoToProgram(programRequest, updateProgram);
+
+        return programMapper.getProgramToDto(updateProgram);
+    }
+
+
+    public Page<ProgramYouthResponse> findYouthPrograms(Pageable pageable) {
+        Page<Program> programs = programRepository.findPrograms(pageable);
+        Page<ProgramYouthResponse> result = programs.map(programMapper::getProgramsToYouths);
+
         return result;
     }
 
+    public ProgramResponse findOne(Long programId) {
+        Program findProgram = findEntity(programId);
+
+        return programMapper.getProgramToDto(findProgram);
+    }
+
+    @Transactional
+    public ProgramResponse deleteProgram(Long programId) {
+        Program program = findEntity(programId);
+        programRepository.deleteById(programId);
+
+        return programMapper.getProgramToDto(program);
+    }
+
+    public Page<ProgramYouthResponse> findByKeyword(String keyword, Pageable pageable) {
+        Page<Program> findPrograms = programRepository.findProgramByKeyword(keyword, pageable);
+
+        return findPrograms.map(programMapper::getProgramsToYouths);
+
+    }
 
     private ProgramThumbnail makeThumbnail(MultipartFile firstImage) throws IOException {
         if (!firstImage.isEmpty()) {
@@ -143,23 +144,12 @@ public class ProgramService {
                     + "."
                     + FilenameUtils.getExtension(firstImage.getOriginalFilename());
 
-            log.info("originalName : {}, fileName : {}, filePath : {}",
-                    firstImage.getOriginalFilename(),
-                    thumbnailName,
-                    dir + thumbnailName
-            );
-
             ImageIO.write(resize,
                     Objects.requireNonNull(FilenameUtils.getExtension(firstImage.getOriginalFilename())),
                     new File(dir + thumbnailName)
             );
 
             File file = new File(dir + thumbnailName);
-
-
-
-            log.info("thumbnail size : {}", file.length() / 1024);
-
 
             return ProgramThumbnail.builder()
                     .originalFileName(firstImage.getOriginalFilename())
@@ -172,69 +162,60 @@ public class ProgramService {
         }
     }
 
-    @Transactional
-    public ProgramResponse updateProgram(Long id, ProgramUpdateRequest programRequest, List<MultipartFile> imageFiles, String fileUri) throws IOException {
-//        Long updateId = programRequest.getProgramId();
-        String filePath = fileUri + uriPath;
-        Program updateProgram = programRepository.findById(id).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
-
-        if (imageFiles != null && !imageFiles.isEmpty()) {
-            updateProgram.getProgramFiles().clear();
-
-            List<ProgramFile> programFiles = saveImageFiles(updateProgram, imageFiles);
-
-            programFileRepository.saveAll(programFiles);
-
-            entityManager.flush();
-            entityManager.clear();
-
-            updateProgram = programRepository.findById(id).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
-        }
-        //
-        //
-
-        programMapper.updateDtoToProgram(programRequest, updateProgram);
-
-        return programMapper.getProgramToDto(updateProgram);
+    private Program findEntity(Long id) {
+        return programRepository.findById(id).orElseThrow(() -> new NoResultException("조건에 맞는 프로그램이 없습니다."));
     }
 
+    private void thumbnailCheck(Program newProgram, ProgramThumbnail programThumbnail) {
+        if (programThumbnail != null) {
+            programThumbnail.setProgram(newProgram);
+            programThumbnailRepository.save(programThumbnail);
+        }
+    }
 
-    public Page<ProgramYouthResponse> findYouthPrograms(Pageable pageable) {
-        Page<Program> programs = programRepository.findPrograms(pageable);
-        Page<ProgramYouthResponse> result = programs.map(programMapper::getProgramsToYouths);
+    private List<ProgramFile> saveImageFileList(Program program, List<MultipartFile> imageFiles) throws IOException {
+        List<ProgramFile> result = new ArrayList<>();
 
+        if (imageFiles != null && !imageFiles.isEmpty()) {
 
+            saveFiles(program, imageFiles, result);
+        }
         return result;
     }
 
-    public ProgramResponse findOne(Long programId) {
-        Program findProgram = programRepository.findById(programId).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
-
-        log.info("findProgram : {}", findProgram);
-
-
-        ProgramResponse programToDto = programMapper.getProgramToDto(findProgram);
-
-        log.info("programToDto : {}", programToDto);
-
-
-        return programToDto;
+    private void saveFiles(
+            Program program, List<MultipartFile> imageFiles, List<ProgramFile> result
+    ) throws IOException {
+        for (MultipartFile imageFile : imageFiles) {
+            saveFile(program, result, imageFile);
+        }
     }
 
-    @Transactional
-    public ProgramResponse deleteProgram(Long programId) {
-        Program program = programRepository.findById(programId).orElseThrow(() -> new NotFoundProgramException("조건에 맞는 프로그램이 없습니다."));
-        programRepository.deleteById(programId);
+    private void saveFile(Program program, List<ProgramFile> result, MultipartFile imageFile) throws IOException {
+        if (!imageFile.isEmpty()) {
 
-        return programMapper.getProgramToDto(program);
-    }
+            BufferedImage image = ImageIO.read(imageFile.getInputStream());
 
-    public Page<ProgramYouthResponse> findByKeyword(String keyword, Pageable pageable) {
-//        PageRequest pageRequest = PageRequest.of(0, 10);
-        Page<Program> findPrograms = programRepository.findProgramByKeyword(keyword, pageable);
+            String newName = UUID.randomUUID()
+                    + "."
+                    + FilenameUtils.getExtension(imageFile.getOriginalFilename());
 
-        return findPrograms.map(programMapper::getProgramsToYouths);
+            ProgramFileRequest programFile = ProgramFileRequest.builder()
+                    .originalFileName(imageFile.getOriginalFilename())
+                    .fileName(newName)
+                    .filePath(dir + newName)
+                    .fileSize(imageFile.getSize() / 1024)
+                    .programId(program.getId())
+                    .build();
 
+            imageFile.transferTo(new File(dir + newName));
+
+            ProgramFile newProgramFile = programMapper.saveDtoToProgram(programFile);
+
+            newProgramFile.setProgram(program);
+
+            result.add(newProgramFile);
+        }
     }
 
 }

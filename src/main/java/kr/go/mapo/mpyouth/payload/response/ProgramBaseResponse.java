@@ -1,6 +1,8 @@
 package kr.go.mapo.mpyouth.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.go.mapo.mpyouth.domain.Category;
 import kr.go.mapo.mpyouth.domain.ContentsStatus;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ProgramBaseResponse {
     private Long id;
     @Schema(description = "프로그램 제목", example = "청소년동아리지원사업 '스스로 프로젝트'")
@@ -47,7 +50,7 @@ public class ProgramBaseResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime endDate;
-    @Schema(description = "신청 url", example = "http://mwyouth.org/")
+    @Schema(description = "신청 url", example = "https://mwyouth.org/")
     private String url;
     @Schema(description = "관리자 이름", example = "김철수")
     private String managerName;
