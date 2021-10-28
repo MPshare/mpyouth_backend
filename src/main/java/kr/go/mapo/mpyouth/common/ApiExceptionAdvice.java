@@ -2,13 +2,10 @@ package kr.go.mapo.mpyouth.common;
 
 
 import kr.go.mapo.mpyouth.api.ApiStatus;
-import kr.go.mapo.mpyouth.exception.NotFoundDonationException;
-import kr.go.mapo.mpyouth.exception.NotFoundProgramException;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.security.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,12 +17,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -33,7 +29,6 @@ import java.util.stream.Collectors;
 public class ApiExceptionAdvice {
 
     private final JwtUtils jwtUtils;
-    private final MessageSource messageSource;
 
 
     @ExceptionHandler({ApiException.class})
@@ -45,36 +40,12 @@ public class ApiExceptionAdvice {
         return ResponseEntity
                 .status(e.getError().getStatus())
                 .body(ApiExceptionEntity.builder()
+                        .success(ApiStatus.FAIL)
                         .errorCode(e.getError().getCode())
                         .errorMessage(e.getError().getMessage())
                         .build());
     }
 
-    @ExceptionHandler({NotFoundProgramException.class})
-    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, NotFoundProgramException e) {
-        e.printStackTrace();
-        log.error("message : {}, localizedMessage : {}", e.getMessage(), e.getLocalizedMessage());
-
-        return ResponseEntity
-                .status(ExceptionEnum.NOT_FOUND_PROGRAM.getStatus())
-                .body(ApiExceptionEntity.builder()
-                        .errorCode(ExceptionEnum.NOT_FOUND_PROGRAM.getCode())
-                        .errorMessage(e.getMessage())
-                        .build());
-    }
-
-    @ExceptionHandler({NotFoundDonationException.class})
-    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, NotFoundDonationException e) {
-        e.printStackTrace();
-        log.error("message : {}, localizedMessage : {}", e.getMessage(), e.getLocalizedMessage());
-
-        return ResponseEntity
-                .status(ExceptionEnum.NOT_FOUND_DONATION.getStatus())
-                .body(ApiExceptionEntity.builder()
-                        .errorCode(ExceptionEnum.NOT_FOUND_DONATION.getCode())
-                        .errorMessage(e.getMessage())
-                        .build());
-    }
 
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, RuntimeException e) {
@@ -84,42 +55,45 @@ public class ApiExceptionAdvice {
         return ResponseEntity
                 .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
                 .body(ApiExceptionEntity.builder()
+                        .success(ApiStatus.FAIL)
                         .errorCode(ExceptionEnum.RUNTIME_EXCEPTION.getCode())
                         .errorMessage(e.getMessage())
                         .build());
     }
 
     @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final AccessDeniedException e) {
-//        e.printStackTrace();
+    public ResponseEntity<ApiExceptionEntity> exceptionHandler(
+            HttpServletRequest request, final AccessDeniedException e
+    ) {
 
         log.error("AccessDeniedException");
-        System.out.println("request:" + request.getHeader("Authorization"));
-        System.out.println("request:" + request.getRequestURI());
         return ResponseEntity
                 .status(ExceptionEnum.ACCESS_DENIED_EXCEPTION.getStatus())
                 .body(ApiExceptionEntity.builder()
+                        .success(ApiStatus.FAIL)
                         .errorCode(ExceptionEnum.ACCESS_DENIED_EXCEPTION.getCode())
                         .errorMessage(ExceptionEnum.ACCESS_DENIED_EXCEPTION.getMessage())
                         .build());
     }
 
-    /*@ExceptionHandler({Exception.class})
+    @ExceptionHandler({Exception.class})
     public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, final Exception e) {
-//        e.printStackTrace();
 
         log.error("Exception");
 
         return ResponseEntity
                 .status(ExceptionEnum.INTERNAL_SERVER_ERROR.getStatus())
                 .body(ApiExceptionEntity.builder()
+                        .success(ApiStatus.FAIL)
                         .errorCode(ExceptionEnum.INTERNAL_SERVER_ERROR.getCode())
                         .errorMessage(e.getMessage())
                         .build());
-    }*/
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiExceptionEntity> processValidationError(MethodArgumentNotValidException exception) {
+        log.error("MethodArgumentNotValidException");
+
         BindingResult bindingResult = exception.getBindingResult();
 
         StringBuilder builder = new StringBuilder();
@@ -128,12 +102,14 @@ public class ApiExceptionAdvice {
             builder.append(fieldError.getField());
             builder.append("](은)는 ");
             builder.append(fieldError.getDefaultMessage());
+            builder.append(". ");
         }
 
 
         return ResponseEntity
                 .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
                 .body(ApiExceptionEntity.builder()
+                        .success(ApiStatus.FAIL)
                         .errorCode(HttpStatus.BAD_REQUEST.toString())
                         .errorMessage(builder.toString())
                         .build());
@@ -146,6 +122,7 @@ public class ApiExceptionAdvice {
         return ResponseEntity
                 .status(ExceptionEnum.NOT_FOUND_URL.getStatus())
                 .body(ApiExceptionEntity.builder()
+                        .success(ApiStatus.FAIL)
                         .errorCode(ExceptionEnum.NOT_FOUND_URL.getCode())
                         .errorMessage(ExceptionEnum.NOT_FOUND_URL.getMessage())
                         .build());
@@ -154,56 +131,64 @@ public class ApiExceptionAdvice {
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<CustomApiResponse<?>> bindExceptionHandling(BindException e, HttpServletRequest request) {
+        log.error("BindException");
 
-        log.info("error uri : {} {}", request.getMethod(), request.getRequestURI());
-        if (e != null) {
-            CustomApiResponse<?> response = CustomApiResponse.builder()
-                    .success(ApiStatus.FAIL)
-                    .message(messageSource.getMessage("typeMismatch.programRequest",
-                            new String[]{
-                                    Arrays.toString(e.getFieldErrors()
-                                            .stream()
-                                            .map(fieldError -> fieldError.getField() + fieldError.getDefaultMessage())
-                                            .toArray())
-                            }
-                            , Locale.getDefault())
-                    )
-                    .build();
-
-            log.error(e.getFieldErrors().stream().map(FieldError::getField).collect(Collectors.toList()).toString());
-            log.error(e.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList()).toString());
-
-            log.error("e.getMessage : {}", e.getMessage());
-            log.error("e.getLocalizedMessage : {}", e.getLocalizedMessage());
-
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        if (e == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+
+        CustomApiResponse<?> response = CustomApiResponse.builder()
+                .success(ApiStatus.FAIL)
+                .message(
+                        ExceptionEnum.BIND_ERROR.getMessage() + " : " +
+                        Arrays.toString(e.getFieldErrors()
+                                .stream()
+                                .map(fieldError -> fieldError.getField() + fieldError.getDefaultMessage())
+                                .toArray())
+                )
+                .build();
+
+        return new ResponseEntity<>(response, ExceptionEnum.BIND_ERROR.getStatus());
+
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<CustomApiResponse<?>> constraintViolationHandle(ConstraintViolationException e) {
-        log.error(e.toString());
+        log.error("ConstraintViolationException");
 
         return new ResponseEntity<>(CustomApiResponse.builder()
                 .success(ApiStatus.FAIL)
-                .message(messageSource.getMessage("constraint.program.validation",
-                        new String[]{Arrays.toString(e.getConstraintViolations().stream()
-                                .map(constraintViolation -> {
-                                    return constraintViolation.getPropertyPath() + " : " + constraintViolation.getMessage();
-                                }).toArray())},
-                        Locale.getDefault()))
-                .build(), HttpStatus.BAD_REQUEST);
+                .message(ExceptionEnum.CONSTRAINT_VIOLATION.getMessage() + " : " +
+                        Arrays.toString(e.getConstraintViolations().stream()
+                                .map(constraintViolation
+                                        -> "[" + constraintViolation.getPropertyPath() + "](은)는 "
+                                        + constraintViolation.getMessage() + " ").toArray())
+                )
+                .build(), ExceptionEnum.CONSTRAINT_VIOLATION.getStatus());
     }
 
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<CustomApiResponse<?>> testApiAdvice(SQLIntegrityConstraintViolationException e) {
+        log.error("SQLIntegrityConstraintViolationException");
         CustomApiResponse<?> response = CustomApiResponse.builder()
                 .success(ApiStatus.FAIL)
-                .message(messageSource.getMessage("constraint.program.og_fk", null, Locale.getDefault()))
+                .message(ExceptionEnum.SQL_INTEGRITY_CONSTRAINT_VIOLATION.getMessage())
                 .build();
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, ExceptionEnum.SQL_INTEGRITY_CONSTRAINT_VIOLATION.getStatus());
+    }
+
+    @ExceptionHandler({NoResultException.class})
+    public ResponseEntity<ApiExceptionEntity> exceptionHandler(HttpServletRequest request, NoResultException e) {
+        log.error("NoResultException");
+
+        return ResponseEntity
+                .status(ExceptionEnum.NOT_FOUND_ENTITY.getStatus())
+                .body(ApiExceptionEntity.builder()
+                        .success(ApiStatus.FAIL)
+                        .errorCode(ExceptionEnum.NOT_FOUND_ENTITY.getCode())
+                        .errorMessage(e.getMessage())
+                        .build());
     }
 
 }
