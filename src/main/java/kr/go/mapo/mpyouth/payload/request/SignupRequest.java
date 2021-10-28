@@ -2,7 +2,6 @@ package kr.go.mapo.mpyouth.payload.request;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.go.mapo.mpyouth.domain.Organization;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,15 +20,15 @@ import java.util.Set;
 public class SignupRequest {
     @NotBlank
     @Size(min = 3, max = 20)
-    @Schema(description = "아이디",  nullable = false,example ="길이는 3~20")
+    @Schema(description = "아이디", example ="길이는 3~20")
     private String adminLoginId;
 
     @NotBlank
     @Size(max = 50)
     @Email
-    @Schema(description = "이메일",nullable = false, example ="mapo@mapoyouth.com")
+    @Schema(description = "이메일", example ="mapo@mapoyouth.com")
     private String email;
-    @Schema(description = "권한", example = "[\"admin\"], [\"manager\"], [\"admin\", \"manager\"]", allowableValues = "admin, manager", type = "array", subTypes = String.class)
+    @Schema(description = "권한", example ="[admin],[manager],[admin,manager]")
     private Set<String> roles;
 
     @NotBlank
@@ -50,7 +49,7 @@ public class SignupRequest {
     @Size(min = 1, max = 10)
     @Schema(description = "이름", example ="길이 1~10")
     private String username;
-    @Schema(description = "기관 id", nullable = false)
+    @Schema(description = "기관 id")
     private Long organizationId;
 
 

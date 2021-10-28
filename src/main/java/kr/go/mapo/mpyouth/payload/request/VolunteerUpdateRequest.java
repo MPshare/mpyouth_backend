@@ -17,7 +17,7 @@ public class VolunteerUpdateRequest extends ProgramUpdateBaseRequest {
     @Schema(description = "봉사유형", example = "INDIVIDUAL", allowableValues = {"INDIVIDUAL", "GROUP"}, required = true)
     private VolunteerType volunteerType;
 
-    @Schema(description = "봉사활동 주기", example = "월|화|수", required = true)
+    @Schema(description = "봉사활동 주기", example = "월|화|수")
     @Size(max = 100)
     private String period;
 }

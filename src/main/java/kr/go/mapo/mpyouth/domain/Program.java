@@ -36,18 +36,19 @@ public class Program extends ProgramBaseEntity {
     private ProgramThumbnail programThumbnail;
 
     @Builder
+
     public Program(
-            Long id, @Size(max = 100) String title,
-            @Size(max = 2000) String description,
-            @Size(max = 100) String location,
+            Long id, String title,
+            String description,
+            String location,
             Integer recruitNumber,
             LocalDateTime recruitStartDate,
             LocalDateTime recruitEndDate,
             LocalDateTime startDate,
             LocalDateTime endDate,
-            @Size(max = 500) String url,
-            @Size(max = 20) String managerName,
-            @Size(max = 50) String managerContact,
+            String url,
+            String managerName,
+            String managerContact,
             RecruitStatus recruitStatus,
             ContentsStatus contentsStatus,
             String caution,
