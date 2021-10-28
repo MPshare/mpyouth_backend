@@ -7,6 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -16,7 +21,9 @@ public class VolunteerRequest extends ProgramBaseRequest {
     @Schema(description = "봉사유형", example = "INDIVIDUAL", allowableValues = {"INDIVIDUAL", "GROUP"}, required = true)
     @NotNull
     private VolunteerType volunteerType;
+
     @Schema(description = "봉사활동 주기", example = "월|화|수", required = true)
     @NotBlank
+    @Size(max = 100)
     private String period;
 }

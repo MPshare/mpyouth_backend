@@ -2,6 +2,9 @@ package kr.go.mapo.mpyouth.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
 import kr.go.mapo.mpyouth.payload.request.OrganizationUpdateRequest;
@@ -24,7 +27,6 @@ import java.util.List;
 public class OrganizationController {
     private final OrganizationService organizationService;
 
-//    @Secured({"ROLE_ADMIN"})
     @Operation(summary = "청소년 기관정보 저장*", description = "청소년 기관 정보를 저장합니다.",
             responses = {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),

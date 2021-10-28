@@ -1,6 +1,8 @@
 package kr.go.mapo.mpyouth.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.go.mapo.mpyouth.domain.ContentsStatus;
 import kr.go.mapo.mpyouth.domain.RecruitStatus;
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 @Setter
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class DonationResponse {
     @Schema(description = "재능기부 ID")
     private Long id;
@@ -76,7 +79,4 @@ public class DonationResponse {
 
     private CategoryResponse category;
 
-//    private Organization organization;
-//
-//    private Category category;
 }

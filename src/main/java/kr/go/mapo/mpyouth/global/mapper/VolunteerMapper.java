@@ -13,8 +13,6 @@ public interface VolunteerMapper {
     @Mapping(source = "categoryId", target = "category.id")
     Volunteer saveDtoToVolunteer(VolunteerRequest volunteerRequest);
 
-//    @Mapping(source = "organization.id", target = "organizationId")
-//    @Mapping(source = "category.id", target = "categoryId")
     VolunteerResponse getVolunteerToDto(Volunteer volunteer);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

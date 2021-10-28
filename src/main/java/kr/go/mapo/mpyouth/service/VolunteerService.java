@@ -1,7 +1,6 @@
 package kr.go.mapo.mpyouth.service;
 
 import kr.go.mapo.mpyouth.domain.Volunteer;
-import kr.go.mapo.mpyouth.exception.NotFoundVolunteerException;
 import kr.go.mapo.mpyouth.global.mapper.VolunteerMapper;
 import kr.go.mapo.mpyouth.payload.request.VolunteerRequest;
 import kr.go.mapo.mpyouth.payload.request.VolunteerUpdateRequest;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 @Slf4j
 @Service
@@ -33,13 +33,13 @@ public class VolunteerService {
         entityManager.flush();
         entityManager.clear();
 
-        Volunteer saveVolunteer = volunteerRepository.findById(saveId).orElseThrow(() -> new NotFoundVolunteerException("조건에 맞는 자원봉사가 없습니다"));
+        Volunteer saveVolunteer = findEntity(saveId);
 
         return volunteerMapper.getVolunteerToDto(saveVolunteer);
     }
 
     public VolunteerResponse findVolunteer(Long id) {
-        Volunteer findVolunteer = volunteerRepository.findById(id).orElseThrow(() -> new NotFoundVolunteerException("조건에 맞는 자원봉사가 없습니다"));
+        Volunteer findVolunteer = findEntity(id);
 
         return volunteerMapper.getVolunteerToDto(findVolunteer);
     }
@@ -52,7 +52,7 @@ public class VolunteerService {
 
     @Transactional
     public VolunteerResponse updateVolunteer(Long id, VolunteerUpdateRequest volunteerUpdateRequest) {
-        Volunteer updateVolunteer = volunteerRepository.findById(id).orElseThrow(() -> new NotFoundVolunteerException("조건에 맞는 자원봉사가 없습니다"));
+        Volunteer updateVolunteer = findEntity(id);
 
         volunteerMapper.updateDtoToProgram(volunteerUpdateRequest, updateVolunteer);
 
@@ -61,11 +61,15 @@ public class VolunteerService {
 
     @Transactional
     public VolunteerResponse deleteVolunteer(Long id) {
-        Volunteer deleteVolunteer = volunteerRepository.findById(id).orElseThrow(() -> new NotFoundVolunteerException("조건에 맞는 자원봉사가 없습니다"));
+        Volunteer deleteVolunteer = findEntity(id);
 
         volunteerRepository.deleteById(id);
 
         return volunteerMapper.getVolunteerToDto(deleteVolunteer);
+    }
+
+    private Volunteer findEntity(Long id) {
+        return volunteerRepository.findById(id).orElseThrow(() -> new NoResultException("조건에 맞는 자원봉사가 없습니다"));
     }
 
     public Page<VolunteerResponse> searchVolunteer(String keyword, Pageable pageable){

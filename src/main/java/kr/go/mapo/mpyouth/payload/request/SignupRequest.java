@@ -3,7 +3,10 @@ package kr.go.mapo.mpyouth.payload.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.go.mapo.mpyouth.domain.Organization;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,6 +15,9 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class SignupRequest {
     @NotBlank
     @Size(min = 3, max = 20)
@@ -23,7 +29,7 @@ public class SignupRequest {
     @Email
     @Schema(description = "이메일",nullable = false, example ="mapo@mapoyouth.com")
     private String email;
-    @Schema(description = "권한", example ="[admin],[manager],[admin,manager]")
+    @Schema(description = "권한", example = "[\"admin\"], [\"manager\"], [\"admin\", \"manager\"]", allowableValues = "admin, manager", type = "array", subTypes = String.class)
     private Set<String> roles;
 
     @NotBlank

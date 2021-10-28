@@ -1,7 +1,6 @@
 package kr.go.mapo.mpyouth.global.mapper;
 
 import kr.go.mapo.mpyouth.domain.LifeLongEdu;
-import kr.go.mapo.mpyouth.domain.Volunteer;
 import kr.go.mapo.mpyouth.payload.request.LifeLongEduRequest;
 import kr.go.mapo.mpyouth.payload.request.LifeLongEduUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.LifeLongEduResponse;

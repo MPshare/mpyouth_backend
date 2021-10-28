@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @DynamicUpdate
 public class LifeLongEdu extends ProgramBaseEntity {
+    @Size(max = 100)
     private String targetAge;
     private Integer entryFee;
 

@@ -15,11 +15,11 @@ import lombok.ToString;
 @Setter
 @ToString
 @ApiModel
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ProgramUpdateRequest extends ProgramUpdateBaseRequest {
     @Schema(description = "참가비", example = "0")
     @ApiModelProperty(name = "entryFee", value = "참가비", notes = "참가비 내용", example = "0")
     private Integer entryFee;
+
     @Schema(description = "대상연령", example = "초|중|고")
     @ApiModelProperty(value = "대상연령", example = "초|중|고")
     private String targetAge;

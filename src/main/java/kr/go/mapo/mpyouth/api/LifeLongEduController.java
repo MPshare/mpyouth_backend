@@ -116,7 +116,7 @@ public class LifeLongEduController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "평생교육 검색", description = "입력된 키워드가 활동이름, 활동상세에 포함된 평생교육 목록을 출력합니다.",
+    @Operation(summary = "평생교육 검색", description = "입력된 키워드가 활동이름, 활동상세에 포함된 평생교육 목록을 출력합니다. (제목, 설명 부분일치)",
             responses = {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")

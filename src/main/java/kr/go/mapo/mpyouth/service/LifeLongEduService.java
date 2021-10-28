@@ -1,15 +1,12 @@
 package kr.go.mapo.mpyouth.service;
 
 import kr.go.mapo.mpyouth.domain.LifeLongEdu;
-import kr.go.mapo.mpyouth.domain.Volunteer;
-import kr.go.mapo.mpyouth.exception.NotFoundLifeLongEduException;
-import kr.go.mapo.mpyouth.exception.NotFoundVolunteerException;
 import kr.go.mapo.mpyouth.global.mapper.LifeLongEduMapper;
 import kr.go.mapo.mpyouth.payload.request.LifeLongEduRequest;
 import kr.go.mapo.mpyouth.payload.request.LifeLongEduUpdateRequest;
+import kr.go.mapo.mpyouth.payload.request.LifeLongEduUpdateRequest;
 import kr.go.mapo.mpyouth.payload.request.VolunteerRequest;
 import kr.go.mapo.mpyouth.payload.response.LifeLongEduResponse;
-import kr.go.mapo.mpyouth.payload.response.VolunteerResponse;
 import kr.go.mapo.mpyouth.repository.LifeLongEduRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 @Slf4j
 @Service
@@ -37,13 +35,13 @@ public class LifeLongEduService {
         entityManager.flush();
         entityManager.clear();
 
-        LifeLongEdu saveLifeLongEdu = lifeLongEduRepository.findById(saveId).orElseThrow(() -> new NotFoundLifeLongEduException("조건에 맞는 평생교육이 없습니다"));
+        LifeLongEdu saveLifeLongEdu = findEntity(saveId);
 
         return lifeLongEduMapper.getLifeLongEduToDto(saveLifeLongEdu);
     }
 
     public LifeLongEduResponse findEdu(Long id) {
-        LifeLongEdu findLifeLongEdu = lifeLongEduRepository.findById(id).orElseThrow(() -> new NotFoundLifeLongEduException("조건에 맞는 평생교육이 없습니다"));
+        LifeLongEdu findLifeLongEdu = findEntity(id);
 
         return lifeLongEduMapper.getLifeLongEduToDto(findLifeLongEdu);
     }
@@ -56,7 +54,7 @@ public class LifeLongEduService {
 
     @Transactional
     public LifeLongEduResponse updateEdu(Long id, LifeLongEduUpdateRequest lifeLongEduUpdateRequest) {
-        LifeLongEdu updateLifeLongEdu = lifeLongEduRepository.findById(id).orElseThrow(() -> new NotFoundLifeLongEduException("조건에 맞는 평생교육이 없습니다"));
+        LifeLongEdu updateLifeLongEdu = findEntity(id);
 
         lifeLongEduMapper.updateDtoToLifeLongEdu(lifeLongEduUpdateRequest, updateLifeLongEdu);
 
@@ -65,11 +63,15 @@ public class LifeLongEduService {
 
     @Transactional
     public LifeLongEduResponse deleteEdu(Long id) {
-        LifeLongEdu deleteVolunteer = lifeLongEduRepository.findById(id).orElseThrow(() -> new NotFoundLifeLongEduException("조건에 맞는 평생교육이 없습니다"));
+        LifeLongEdu deleteVolunteer = findEntity(id);
 
         lifeLongEduRepository.deleteById(id);
 
         return lifeLongEduMapper.getLifeLongEduToDto(deleteVolunteer);
+    }
+
+    private LifeLongEdu findEntity(Long id) {
+        return lifeLongEduRepository.findById(id).orElseThrow(() -> new NoResultException("조건에 맞는 평생교육이 없습니다"));
     }
 
     public Page<LifeLongEduResponse> searchEdu(String keyword, Pageable pageable) {

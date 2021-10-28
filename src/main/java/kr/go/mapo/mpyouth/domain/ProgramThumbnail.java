@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -15,13 +16,16 @@ import javax.persistence.*;
 @Setter
 @ToString
 public class ProgramThumbnail extends BaseEntity {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(max = 100)
     private String originalFileName;
 
+    @Size(max = 100)
     private String fileName;
 
+    @Size(max = 500)
     private String filePath;
 
     private Long fileSize;

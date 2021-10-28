@@ -5,7 +5,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Getter
@@ -17,13 +17,16 @@ import javax.validation.constraints.NotBlank;
 
 @ToString(of = {"id", "originalFileName", "fileName", "filePath", "fileSize"})
 public class ProgramFile extends BaseEntity {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(max = 100)
     private String originalFileName;
 
+    @Size(max = 100)
     private String fileName;
 
+    @Size(max = 500)
     private String filePath;
 
     private Long fileSize;

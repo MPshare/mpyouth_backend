@@ -1,7 +1,6 @@
 package kr.go.mapo.mpyouth.service;
 
 import kr.go.mapo.mpyouth.domain.Donation;
-import kr.go.mapo.mpyouth.exception.NotFoundDonationException;
 import kr.go.mapo.mpyouth.global.mapper.DonationMapper;
 import kr.go.mapo.mpyouth.payload.request.DonationRequest;
 import kr.go.mapo.mpyouth.payload.request.DonationUpdateRequest;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 @Slf4j
 @Service
@@ -25,21 +25,20 @@ public class DonationService {
     private final DonationMapper donationMapper;
     private final EntityManager entityManager;
 
-    public DonationResponse getDonation(Long id){
-        Donation donation = donationRepository.findById(id)
-                .orElseThrow(()->new NotFoundDonationException("조건에 맞는 재능기부가 없습니다."));
+    public DonationResponse getDonation(Long id) {
+        Donation donation = findEntity(id);
 
         return donationMapper.getDtoToDonation(donation);
     }
 
-    public Page<DonationResponse> getDonations(Pageable pageable){
+    public Page<DonationResponse> getDonations(Pageable pageable) {
         Page<Donation> all = donationRepository.findAll(pageable);
 
         return all.map(donationMapper::getDtoToDonation);
     }
 
     @Transactional
-    public DonationResponse saveDonation(DonationRequest donationRequest){
+    public DonationResponse saveDonation(DonationRequest donationRequest) {
 
         Donation donation = donationMapper.saveDtoToDonation(donationRequest);
 
@@ -54,8 +53,8 @@ public class DonationService {
     }
 
     @Transactional
-    public DonationResponse updateDonation(Long id, DonationUpdateRequest donationUpdateRequest){
-        Donation updateDonation = donationRepository.findById(id).orElseThrow(()->new NotFoundDonationException("조건에 맞는 재능기부가 없습니다."));
+    public DonationResponse updateDonation(Long id, DonationUpdateRequest donationUpdateRequest) {
+        Donation updateDonation = findEntity(id);
 
         donationMapper.updateDtoToDonation(donationUpdateRequest, updateDonation);
 
@@ -63,17 +62,22 @@ public class DonationService {
     }
 
     @Transactional
-    public DonationResponse deleteDonation(Long id){
-        Donation donation = donationRepository.findById(id).orElseThrow(()->new NotFoundDonationException("조건에 맞는 재능기부가 없습니다."));
+    public DonationResponse deleteDonation(Long id) {
+        Donation donation = findEntity(id);
 
         donationRepository.deleteById(id);
 
         return donationMapper.getDtoToDonation(donation);
     }
 
-    public Page<DonationResponse> searchDonation(String keyword, Pageable pageable){
+    public Page<DonationResponse> searchDonation(String keyword, Pageable pageable) {
         Page<Donation> byLifeDonation = donationRepository.findByLifeDonation(keyword, pageable);
 
         return byLifeDonation.map(donationMapper::getDtoToDonation);
+    }
+
+    private Donation findEntity(Long id) {
+        return donationRepository.findById(id)
+                .orElseThrow(() -> new NoResultException("조건에 맞는 재능기부가 없습니다."));
     }
 }

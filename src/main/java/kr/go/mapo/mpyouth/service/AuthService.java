@@ -88,7 +88,6 @@ public class AuthService {
             user.setOrganization(organization);
         }
 
-
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 

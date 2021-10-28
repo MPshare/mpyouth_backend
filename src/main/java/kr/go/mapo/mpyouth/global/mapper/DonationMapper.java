@@ -6,8 +6,6 @@ import kr.go.mapo.mpyouth.payload.request.DonationUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.DonationResponse;
 import org.mapstruct.*;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring", uses = {DonationMapper.class, CategoryMapper.class, OrganizationMapper.class},
         injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface DonationMapper {
@@ -17,8 +15,6 @@ public interface DonationMapper {
     Donation saveDtoToDonation(DonationRequest donationRequest);
 
     DonationResponse getDtoToDonation(Donation donation);
-
-    List<DonationResponse> getDtosToDonations(List<Donation> donation);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateDtoToDonation(DonationUpdateRequest donationUpdateRequest, @MappingTarget Donation donation);

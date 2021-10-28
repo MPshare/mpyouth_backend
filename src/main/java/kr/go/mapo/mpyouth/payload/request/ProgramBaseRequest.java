@@ -30,12 +30,12 @@ public class ProgramBaseRequest {
 
     @ApiModelProperty(value = "설명", example = "마포구 청소년동아리의 균형적 발전과 청소년문화 환경을 개선하고자 ...", required = true)
     @NotBlank
-    @Size(max = 500)
+    @Size(max = 2000)
     private String description;
 
     @ApiModelProperty(value = "프로그램 위치", example = "서울특별시 마포구 도화동 353-2", required = true)
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 100)
     private String location;
 
     @ApiModelProperty(value = "모집인원수", example = "10", required = true)
@@ -46,21 +46,25 @@ public class ProgramBaseRequest {
     @ApiModelProperty(value = "인원모집 시작날짜", example = "2021-12-25 00:00:00", required = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull
     private LocalDateTime recruitStartDate;
 
     @ApiModelProperty(value = "인원모집 종료날짜", example = "2021-12-25 00:00:00", required = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull
     private LocalDateTime recruitEndDate;
 
     @ApiModelProperty(value = "프로그램 시작날짜", example = "2021-12-25 00:00:00", required = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull
     private LocalDateTime startDate;
 
     @ApiModelProperty(value = "프로그램 종료날짜", example = "2021-12-25 00:00:00", required = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull
     private LocalDateTime endDate;
 
     @ApiModelProperty(value = "신청 url", example = "http://mwyouth.org/", required = true)
@@ -88,7 +92,7 @@ public class ProgramBaseRequest {
 
     @ApiModelProperty(value = "주의사항", example = "참여하시기 전에 다음 사항을 숙지해주세요...", required = true)
     @Parameter(name = "caution", in = ParameterIn.QUERY, array = @ArraySchema( schema = @Schema(type = "string")))
-//    @NotBlank
+    @NotBlank
     @Size(max = 2000)
     private String caution;
 
@@ -99,4 +103,5 @@ public class ProgramBaseRequest {
     @ApiModelProperty(value = "카테고리 ID", example = "1", required = true)
     @NotNull
     private Long categoryId;
+
 }

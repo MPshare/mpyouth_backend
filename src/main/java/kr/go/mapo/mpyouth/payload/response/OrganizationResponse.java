@@ -24,7 +24,7 @@ public class OrganizationResponse {
     private String phone;
     @Schema(description = "기관대표", example = "김철수")
     private String representative;
-    @Schema(description = "홈페이지", example = "http://url.com")
+    @Schema(description = "홈페이지", example = "https://url.com")
     private String homepage;
     @Schema(description = "자기소개", example = "자기소개")
     private String introduce;

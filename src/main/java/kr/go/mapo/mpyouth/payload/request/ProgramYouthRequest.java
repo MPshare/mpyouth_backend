@@ -10,6 +10,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -19,12 +24,15 @@ import javax.validation.constraints.PositiveOrZero;
 @ToString
 @ApiModel
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ProgramRequest extends ProgramBaseRequest {
+public class ProgramYouthRequest extends ProgramBaseRequest {
     @ApiModelProperty(name = "entryFee", value = "참가비", notes = "참가비 내용", example = "0", required = true)
     @NotNull
     @PositiveOrZero
     private Integer entryFee;
+
     @ApiModelProperty(value = "대상연령", example = "초|중|고", required = true)
+    @NotEmpty
+    @Size(max = 100)
     @NotBlank
     private String targetAge;
 

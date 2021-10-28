@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import kr.go.mapo.mpyouth.payload.request.ProgramRequest;
+import kr.go.mapo.mpyouth.payload.request.ProgramYouthRequest;
 import kr.go.mapo.mpyouth.payload.request.ProgramUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.CustomApiResponse;
 import kr.go.mapo.mpyouth.payload.response.ProgramResponse;
@@ -16,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,9 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/api")
 @RestController
@@ -86,12 +88,12 @@ public class ProgramController {
             produces = {MediaType.APPLICATION_JSON_VALUE}
     )
     public ResponseEntity<CustomApiResponse<ProgramResponse>> saveProgram(
-            @Validated @ModelAttribute("programRequest") ProgramRequest programRequest,
+            @Validated @ModelAttribute("programRequest") ProgramYouthRequest programYouthRequest,
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             HttpServletRequest request
     ) throws Exception {
-        System.out.println("programDto = " + programRequest);
-        log.info("{}", programRequest);
+        System.out.println("programDto = " + programYouthRequest);
+        log.info("{}", programYouthRequest);
 
         String fileUri = request.getScheme()
                 + "://"
@@ -101,7 +103,7 @@ public class ProgramController {
 
         log.info("fileUri : {}", fileUri);
 
-        ProgramResponse saveProgram = programService.saveProgram(programRequest, imageFiles, fileUri);
+        ProgramResponse saveProgram = programService.saveProgram(programYouthRequest, imageFiles, fileUri);
 
         CustomApiResponse<ProgramResponse> response = CustomApiResponse.<ProgramResponse>builder()
                 .success(ApiStatus.SUCCESS)
@@ -127,7 +129,6 @@ public class ProgramController {
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             HttpServletRequest request
     ) throws IOException {
-//        updateRequest(id);
 
         log.info("{}", updateRequest);
 
@@ -167,7 +168,7 @@ public class ProgramController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "청소년 프로그램 검색", description = "청소년 프로그램 내용을 검색합니다.",
+    @Operation(summary = "청소년 프로그램 검색", description = "청소년 프로그램 내용을 검색합니다. (제목, 설명 부분일치)",
             responses = {
                     @ApiResponse(responseCode = "400", description = "BAD_REQUEST"),
                     @ApiResponse(responseCode = "404", description = "NOT_FOUND")
