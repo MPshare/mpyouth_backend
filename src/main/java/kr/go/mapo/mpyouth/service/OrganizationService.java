@@ -1,6 +1,5 @@
 package kr.go.mapo.mpyouth.service;
 
-import kr.go.mapo.mpyouth.exception.NotFoundOrganizationException;
 import kr.go.mapo.mpyouth.payload.request.OrganizationRequest;
 import kr.go.mapo.mpyouth.payload.request.OrganizationUpdateRequest;
 import kr.go.mapo.mpyouth.payload.response.OrganizationResponse;
